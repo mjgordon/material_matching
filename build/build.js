@@ -66,13 +66,13 @@ function setup() {
     console.log("🚀 - Setup initialized - P5 is running");
     createCanvas(windowWidth, windowHeight);
     rectMode(CENTER).noFill().frameRate(30);
-    numberOfShapesControl = createSlider(1, 30, 15, 1).position(10, 10).style("width", "100px");
+    numberOfShapesControl = select("#sizeSlider");
 }
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
 }
 function draw() {
-    background(0);
+    background(255);
     translate(width / 2, height / 2);
     var numberOfShapes = numberOfShapesControl.value();
     var colours = ColorHelper.getColorsArray(numberOfShapes);
@@ -81,7 +81,7 @@ function draw() {
         push();
         var lineWidth = 8;
         var spin = speed * (numberOfShapes - i);
-        var numberOfSides = 3 + i;
+        var numberOfSides = 4;
         var width_1 = 40 * i;
         strokeWeight(lineWidth);
         stroke(colours[i]);
