@@ -295,7 +295,15 @@ function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
 }
 function draw() {
-    background(255);
+    background(127);
+    stroke(255);
+    strokeWeight(0.5);
+    for (var x = 0; x < width; x += 100) {
+        line(x, 0, x, height);
+    }
+    for (var y = 0; y < height; y += 100) {
+        line(0, y, width, y);
+    }
     switch (currentMode) {
         case MouseMode.PLACE_SUPPORT:
             dummySupport.position.x = mouseX;
