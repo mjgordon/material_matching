@@ -42,13 +42,16 @@ class Scene{
     tick() {
         let gravity:number = this.gravity;
         this.nodes.forEach(function(node) {
-            
             node.simAcceleration.y = gravity;
             node.simTick();
 
             if (node.position.y > height) {
                 node.position.y = height;
             }
+        });
+
+        this.beams.forEach(function(beam) {
+            beam.simTick();
         });
     }
 
@@ -76,6 +79,6 @@ class Scene{
             }
         });
 
-        return bestNode;
+        return bestNode
     }
 }

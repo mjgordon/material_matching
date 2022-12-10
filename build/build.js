@@ -104,6 +104,9 @@ var Scene = (function () {
                 node.position.y = height;
             }
         });
+        this.beams.forEach(function (beam) {
+            beam.simTick();
+        });
     };
     Scene.prototype.switchSimMode = function (mode) {
         if (this.simMode == SimMode.STOPPED && mode == SimMode.PLAYING) {
@@ -185,6 +188,7 @@ var SENode = (function (_super) {
             this.simVelocity.setMag(SENode.simMaxSpeed);
         }
         this.simPosition.add(this.simVelocity);
+        this.simAcceleration.set(0, 0);
     };
     SENode.prototype.simSetAcceleration = function (accel) {
         this.simAcceleration.set(accel);
@@ -198,6 +202,8 @@ var SEBeam = (function (_super) {
     __extends(SEBeam, _super);
     function SEBeam(childA, childB) {
         var _this = _super.call(this) || this;
+        _this.restLength = 100;
+        _this.strength = 0.05;
         _this.childA = childA;
         _this.childB = childB;
         return _this;
@@ -220,6 +226,25 @@ var SEBeam = (function (_super) {
     SEBeam.prototype.simInit = function () {
     };
     SEBeam.prototype.simTick = function () {
+        var childDelta = p5.Vector.sub(this.childB.simPosition, this.childA.simPosition);
+        var deltaLength = this.restLength - childDelta.mag();
+        if (Math.abs(deltaLength) > 1) {
+            var push = this.strength * Math.sign(deltaLength);
+            if (!this.childA.support && !this.childB.support) {
+                childDelta.normalize().mult(-push / 2);
+                this.childA.simVelocity.add(childDelta);
+                childDelta.normalize().mult(push / 2);
+                this.childB.simVelocity.add(childDelta);
+            }
+            if (!this.childA.support) {
+                childDelta.normalize().mult(-push);
+                this.childA.simVelocity.add(childDelta);
+            }
+            if (!this.childB.support) {
+                childDelta.normalize().mult(push);
+                this.childB.simVelocity.add(childDelta);
+            }
+        }
     };
     return SEBeam;
 }(SceneElement));

@@ -58,6 +58,7 @@ class SENode extends SceneElement {
             this.simVelocity.setMag(SENode.simMaxSpeed);
         }
         this.simPosition.add(this.simVelocity);
+        this.simAcceleration.set(0,0);
     }
 
     simSetAcceleration(accel:p5.Vector):void {
@@ -70,6 +71,9 @@ class SEBeam extends SceneElement {
     childB:SENode;
 
     dummyB:p5.Vector;
+
+    restLength:number = 100;
+    strength:number = 0.05;
 
     constructor(childA:SENode, childB:SENode) {
         super();
@@ -99,6 +103,25 @@ class SEBeam extends SceneElement {
     }
 
     simTick():void {
+        let childDelta:p5.Vector = p5.Vector.sub(this.childB.simPosition, this.childA.simPosition);
+        let deltaLength:number = this.restLength - childDelta.mag();
 
+        if (Math.abs(deltaLength) > 1) {
+            var push:number = this.strength * Math.sign(deltaLength);
+            if (!this.childA.support && !this.childB.support) {
+                childDelta.normalize().mult(-push / 2);
+                this.childA.simVelocity.add(childDelta);
+                childDelta.normalize().mult(push / 2);
+                this.childB.simVelocity.add(childDelta);
+            }
+            if (!this.childA.support) {
+                childDelta.normalize().mult(-push);
+                this.childA.simVelocity.add(childDelta);
+            }
+            if (!this.childB.support) {
+                childDelta.normalize().mult(push);
+                this.childB.simVelocity.add(childDelta);
+            }
+        }
     }
 }
