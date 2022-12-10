@@ -18,9 +18,12 @@ class Scene{
 
 
     draw() {
-        this.sceneElements.forEach(function(se) {
+        this.beams.forEach(function(se) {
             se.draw();
-          });
+        });
+        this.nodes.forEach(function(se) {
+            se.draw();
+        });
     }
 
     addElement(se:SceneElement) {

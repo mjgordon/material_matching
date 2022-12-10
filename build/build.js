@@ -78,7 +78,10 @@ var Scene = (function () {
         this.simMode = SimMode.STOPPED;
     }
     Scene.prototype.draw = function () {
-        this.sceneElements.forEach(function (se) {
+        this.beams.forEach(function (se) {
+            se.draw();
+        });
+        this.nodes.forEach(function (se) {
             se.draw();
         });
     };
@@ -170,8 +173,10 @@ var SENode = (function (_super) {
         if (!this.visible) {
             return;
         }
+        stroke(0);
+        strokeWeight(1);
         if (this.support) {
-            fill(128);
+            fill(64);
         }
         else {
             fill(20, 20, 255);
@@ -208,7 +213,7 @@ var SEBeam = (function (_super) {
     function SEBeam(childA, childB) {
         var _this = _super.call(this) || this;
         _this.restLength = 100;
-        _this.strength = 0.05;
+        _this.strength = 0.1;
         _this.childA = childA;
         _this.childB = childB;
         return _this;
@@ -396,6 +401,19 @@ function keyPressed() {
         case 'b':
             switchMode(MouseMode.PLACE_BEAM_A);
             break;
+        case ' ':
+            switch (scene.simMode) {
+                case SimMode.STOPPED:
+                    scene.switchSimMode(SimMode.PLAYING);
+                    break;
+                case SimMode.PLAYING:
+                    scene.switchSimMode(SimMode.PAUSED);
+                    break;
+                case SimMode.PAUSED:
+                    scene.switchSimMode(SimMode.PLAYING);
+                    break;
+            }
+            break;
     }
 }
 function mousePressed() {
@@ -423,7 +441,7 @@ function mousePressed() {
             if (nodePick) {
                 dummyBeam.childB = nodePick;
                 scene.addElement(dummyBeam);
-                switchMode(MouseMode.EMPTY);
+                switchMode(MouseMode.PLACE_BEAM_A);
             }
             break;
     }

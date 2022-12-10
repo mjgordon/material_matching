@@ -33,8 +33,10 @@ class SENode extends SceneElement {
             return;
         }
 
+        stroke(0);
+        strokeWeight(1);
         if (this.support) {
-            fill(128);
+            fill(64);
         }
         else {
             fill(20,20,255);
@@ -74,7 +76,7 @@ class SEBeam extends SceneElement {
     dummyB:p5.Vector;
 
     restLength:number = 100;
-    strength:number = 0.05;
+    strength:number = 0.1;
 
     constructor(childA:SENode, childB:SENode) {
         super();

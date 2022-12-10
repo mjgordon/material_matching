@@ -168,6 +168,7 @@ function keyPressed() {
   if (keyCode == ESCAPE) {
     switchMode(MouseMode.EMPTY);
   }
+  
 
   switch(key) {
     case 's':
@@ -180,6 +181,20 @@ function keyPressed() {
 
     case 'b':
       switchMode(MouseMode.PLACE_BEAM_A);
+    break;
+
+    case ' ':
+      switch(scene.simMode) {
+        case SimMode.STOPPED:
+          scene.switchSimMode(SimMode.PLAYING);
+        break;
+        case SimMode.PLAYING:
+          scene.switchSimMode(SimMode.PAUSED);
+        break;
+        case SimMode.PAUSED:
+          scene.switchSimMode(SimMode.PLAYING);
+        break;
+      }
     break;
   }
 }
@@ -215,7 +230,7 @@ function mousePressed():void {
       if (nodePick) {
         dummyBeam.childB = nodePick;
         scene.addElement(dummyBeam);
-        switchMode(MouseMode.EMPTY);
+        switchMode(MouseMode.PLACE_BEAM_A);
       }
     break;
   }
