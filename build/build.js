@@ -97,6 +97,7 @@ var Scene = (function () {
     Scene.prototype.clear = function () {
         this.sceneElements = [];
         this.nodes = [];
+        this.beams = [];
     };
     Scene.prototype.reset = function () {
         this.nodes.forEach(function (node) {
@@ -217,6 +218,9 @@ var SEBeam = (function (_super) {
         _this.strength = 0.1;
         _this.childA = childA;
         _this.childB = childB;
+        if (childA && childB) {
+            _this.restLength = childA.position.dist(childB.position);
+        }
         return _this;
     }
     SEBeam.prototype.draw = function () {
@@ -388,6 +392,26 @@ function setupControl() {
     buttonReset.mousePressed(function () {
         scene.switchSimMode(SimMode.STOPPED);
         scene.reset();
+    });
+    var buttonDemo = select("#buttonLoadDemo");
+    buttonDemo.mousePressed(function () {
+        scene.clear();
+        scene.addElement(new SENode(createVector(600, 600), true));
+        scene.addElement(new SENode(createVector(800, 600), true));
+        scene.addElement(new SENode(createVector(600, 500), false));
+        scene.addElement(new SENode(createVector(800, 500), false));
+        scene.addElement(new SENode(createVector(600, 400), false));
+        scene.addElement(new SENode(createVector(800, 400), false));
+        scene.addElement(new SEBeam(scene.nodes[0], scene.nodes[2]));
+        scene.addElement(new SEBeam(scene.nodes[1], scene.nodes[3]));
+        scene.addElement(new SEBeam(scene.nodes[2], scene.nodes[3]));
+        scene.addElement(new SEBeam(scene.nodes[4], scene.nodes[5]));
+        scene.addElement(new SEBeam(scene.nodes[2], scene.nodes[4]));
+        scene.addElement(new SEBeam(scene.nodes[3], scene.nodes[5]));
+        scene.addElement(new SEBeam(scene.nodes[0], scene.nodes[3]));
+        scene.addElement(new SEBeam(scene.nodes[1], scene.nodes[2]));
+        scene.addElement(new SEBeam(scene.nodes[2], scene.nodes[5]));
+        scene.addElement(new SEBeam(scene.nodes[3], scene.nodes[4]));
     });
 }
 function keyPressed() {

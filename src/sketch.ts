@@ -164,6 +164,31 @@ function setupControl() {
     scene.switchSimMode(SimMode.STOPPED);
     scene.reset();
   });
+
+  let buttonDemo = select("#buttonLoadDemo");
+  buttonDemo.mousePressed(function() {
+    scene.clear();
+    scene.addElement(new SENode(createVector(600,600),true));  // 0
+    scene.addElement(new SENode(createVector(800,600),true));  // 1
+
+    scene.addElement(new SENode(createVector(600,500),false)); // 2
+    scene.addElement(new SENode(createVector(800,500),false)); // 3
+    scene.addElement(new SENode(createVector(600,400),false)); // 4
+    scene.addElement(new SENode(createVector(800,400),false)); // 5
+
+    scene.addElement(new SEBeam(scene.nodes[0],scene.nodes[2]));
+    scene.addElement(new SEBeam(scene.nodes[1],scene.nodes[3]));
+    scene.addElement(new SEBeam(scene.nodes[2],scene.nodes[3]));
+    scene.addElement(new SEBeam(scene.nodes[4],scene.nodes[5]));
+    scene.addElement(new SEBeam(scene.nodes[2],scene.nodes[4]));
+    scene.addElement(new SEBeam(scene.nodes[3],scene.nodes[5]));
+
+    scene.addElement(new SEBeam(scene.nodes[0],scene.nodes[3]));
+    scene.addElement(new SEBeam(scene.nodes[1],scene.nodes[2]));
+
+    scene.addElement(new SEBeam(scene.nodes[2],scene.nodes[5]));
+    scene.addElement(new SEBeam(scene.nodes[3],scene.nodes[4]));
+  });
 }
 
 function keyPressed() {

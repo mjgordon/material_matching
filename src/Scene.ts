@@ -40,6 +40,7 @@ class Scene{
     clear() {
         this.sceneElements = [];
         this.nodes = [];
+        this.beams = [];
     }
 
     reset() {

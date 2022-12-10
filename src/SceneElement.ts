@@ -82,6 +82,10 @@ class SEBeam extends SceneElement {
         super();
         this.childA = childA;
         this.childB = childB;
+
+        if (childA && childB) {
+            this.restLength = childA.position.dist(childB.position);
+        }
     }
 
     draw(): void {
@@ -111,6 +115,7 @@ class SEBeam extends SceneElement {
 
         if (Math.abs(deltaLength) > 1) {
             var push:number = this.strength * Math.sign(deltaLength);
+            //push = deltaLength * 0.1;
             if (!this.childA.support && !this.childB.support) {
                 var pushDelta = childDelta.copy().normalize().mult(-push / 2);
                 this.childA.simVelocity.add(pushDelta);
