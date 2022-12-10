@@ -63,9 +63,9 @@ var PolygonHelper = (function () {
 }());
 var SimMode;
 (function (SimMode) {
-    SimMode[SimMode["STOPPED"] = 0] = "STOPPED";
-    SimMode[SimMode["PLAYING"] = 1] = "PLAYING";
-    SimMode[SimMode["PAUSED"] = 2] = "PAUSED";
+    SimMode["STOPPED"] = "Stopped";
+    SimMode["PLAYING"] = "Playing";
+    SimMode["PAUSED"] = "Paused";
 })(SimMode || (SimMode = {}));
 var Scene = (function () {
     function Scene() {
@@ -123,6 +123,7 @@ var Scene = (function () {
             });
         }
         this.simMode = mode;
+        simLabel.html(mode);
     };
     Scene.prototype.pickNode = function (vMouse) {
         var clickRadius = 20;
@@ -261,6 +262,7 @@ var SEBeam = (function (_super) {
 var controlDiv = null;
 var scene = null;
 var toolLabel = null;
+var simLabel = null;
 var MouseMode;
 (function (MouseMode) {
     MouseMode[MouseMode["EMPTY"] = 0] = "EMPTY";
@@ -289,6 +291,7 @@ function setup() {
         cursor(ARROW);
     });
     toolLabel = select("#toolLabel");
+    simLabel = select("#simLabel");
     dummySupport = new SENode(createVector(-100, -100), true);
     dummySupport.visible = false;
     dummyNode = new SENode(createVector(-100, -100), false);

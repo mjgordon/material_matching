@@ -1,7 +1,7 @@
 enum SimMode {
-    STOPPED,
-    PLAYING,
-    PAUSED
+    STOPPED = "Stopped",
+    PLAYING = "Playing",
+    PAUSED = "Paused"
 }
 
 class Scene{
@@ -71,6 +71,7 @@ class Scene{
               });
         }
         this.simMode = mode;
+        simLabel.html(mode);
     }
 
     pickNode(vMouse:p5.Vector):SENode {

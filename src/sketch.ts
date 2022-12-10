@@ -2,6 +2,7 @@ let controlDiv: p5.Element = null;
 let scene:Scene = null;
 
 let toolLabel: p5.Element = null;
+let simLabel: p5.Element = null;
 
 enum MouseMode {
   EMPTY,
@@ -40,6 +41,7 @@ function setup() {
   });
 
   toolLabel = select("#toolLabel");
+  simLabel = select("#simLabel");
 
   dummySupport = new SENode(createVector(-100,-100),true);
   dummySupport.visible = false;
