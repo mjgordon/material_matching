@@ -295,11 +295,15 @@ function draw() {
         case MouseMode.PLACE_SUPPORT:
             dummySupport.position.x = mouseX;
             dummySupport.position.y = mouseY;
+            dummySupport.simPosition.x = mouseX;
+            dummySupport.simPosition.y = mouseY;
             dummySupport.draw();
             break;
         case MouseMode.PLACE_NODE:
             dummyNode.position.x = mouseX;
             dummyNode.position.y = mouseY;
+            dummyNode.simPosition.x = mouseX;
+            dummyNode.simPosition.y = mouseY;
             dummyNode.draw();
             break;
         case MouseMode.PLACE_BEAM_B:
@@ -368,6 +372,17 @@ function setupControl() {
 function keyPressed() {
     if (keyCode == ESCAPE) {
         switchMode(MouseMode.EMPTY);
+    }
+    switch (key) {
+        case 's':
+            switchMode(MouseMode.PLACE_SUPPORT);
+            break;
+        case 'n':
+            switchMode(MouseMode.PLACE_NODE);
+            break;
+        case 'b':
+            switchMode(MouseMode.PLACE_BEAM_A);
+            break;
     }
 }
 function mousePressed() {

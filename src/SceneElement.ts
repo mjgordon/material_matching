@@ -32,6 +32,7 @@ class SENode extends SceneElement {
         if (!this.visible) {
             return;
         }
+
         if (this.support) {
             fill(128);
         }
