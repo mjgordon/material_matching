@@ -236,18 +236,18 @@ var SEBeam = (function (_super) {
         if (Math.abs(deltaLength) > 1) {
             var push = this.strength * Math.sign(deltaLength);
             if (!this.childA.support && !this.childB.support) {
-                childDelta.normalize().mult(-push / 2);
-                this.childA.simVelocity.add(childDelta);
-                childDelta.normalize().mult(push / 2);
-                this.childB.simVelocity.add(childDelta);
+                var pushDelta = childDelta.copy().normalize().mult(-push / 2);
+                this.childA.simVelocity.add(pushDelta);
+                var pushDelta = childDelta.copy().normalize().mult(push / 2);
+                this.childB.simVelocity.add(pushDelta);
             }
             if (!this.childA.support) {
-                childDelta.normalize().mult(-push);
-                this.childA.simVelocity.add(childDelta);
+                var pushDelta = childDelta.copy().normalize().mult(-push);
+                this.childA.simVelocity.add(pushDelta);
             }
             if (!this.childB.support) {
-                childDelta.normalize().mult(push);
-                this.childB.simVelocity.add(childDelta);
+                var pushDelta = childDelta.copy().normalize().mult(push);
+                this.childB.simVelocity.add(pushDelta);
             }
         }
     };
