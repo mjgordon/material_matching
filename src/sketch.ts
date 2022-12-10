@@ -229,6 +229,7 @@ function mousePressed():void {
       var nodePick:SENode = scene.pickNode(createVector(mouseX,mouseY));
       if (nodePick) {
         dummyBeam.childB = nodePick;
+        dummyBeam.restLength = dummyBeam.childA.position.dist(dummyBeam.childB.position);
         scene.addElement(dummyBeam);
         switchMode(MouseMode.PLACE_BEAM_A);
       }
