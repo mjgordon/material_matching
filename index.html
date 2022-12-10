@@ -2,45 +2,28 @@
   <head>
     <link rel="stylesheet" href="main.css">
 
-    <div name="controls" style="position: absolute; left: 10px; top: 10px;" class="controlBox">
+    <div name="controls" id="controlDiv" style="position: absolute; left: 10px; top: 10px;" class="controlBox">
       <span style="padding-top:10px; padding-bottom: 10px"><b>Controls</b> </span>
       
-      <div style="padding-top:10px; padding-bottom: 10px">
-        <label>
-          Size
-          <input type="range" min="1" max="30" step="1" style="width:100px; position: relative; top:5;margin-left:20px" id="sizeSlider" vertical-align="middle"> 
-        </label>
-      </div>
-      
-      <div style="padding-top:10px; padding-bottom: 10px">
-        <label style="padding-top:10px; padding-bottom: 10px">
-          Create Support
-          <input id="buttonCreateSupport" type="button" style="width:20px; float:right"> 
-        </label>
-      </div>
-      <div style="padding-top:10px; padding-bottom: 10px">
-        <label >
-          Create Node
-          <input id="buttonCreateNode" type="button" style="width:20px; float:right"> 
-        </label>
-      </div>
-      <div style="padding-top:10px; padding-bottom: 10px">
-        <label >
-          Create Beam
-          <input id="buttonCreateBeam" type="button" style="width:20px; float:right"> 
-        </label>
-      </div>
+      <br>
+      <button class="button" id="buttonCreateSupport"> Create Support</button>
+      <br>  
+      <button class="button" id="buttonCreateNode" > Create Node</button>
+      <br>
+      <button class="button" id="buttonCreateBeam" > Create Beam</button>
+
+
       
       
       
       <br>
       <span id="toolLabel" style="padding-top:10px; padding-bottom: 10px">No Tool </span>
 
+      <hr style="margin: 10px">
 
-      <br>
-      <button class="button">Play</button>
-      <button class="button">Pause</button>
-      <button class="button">Reset</button>
+      <button class="button" id="buttonPlay">Play</button>
+      <button class="button" id="buttonPause">Pause</button>
+      <button class="button" id="buttonReset">Reset</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"

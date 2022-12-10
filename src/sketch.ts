@@ -1,6 +1,4 @@
-
-let numberOfShapesControl: p5.Element;
-
+let controlDiv: p5.Element = null;
 let scene:Scene = null;
 
 let toolLabel: p5.Element = null;
@@ -9,27 +7,47 @@ enum MouseMode {
   EMPTY,
   PLACE_SUPPORT,
   PLACE_NODE,
-  PLACE_BEAM
+  PLACE_BEAM_A,
+  PLACE_BEAM_B
 }
 
 let currentMode: MouseMode = MouseMode.EMPTY;
 
-let dummySupport: SESupport;
+
+
+let dummySupport: SENode;
 let dummyNode: SENode;
+let dummyBeam: SEBeam;
+
+let mouseOverControl:boolean = false;
+
 
 function setup() {
   console.log("🚀 - Setup initialized - P5 is running");
   createCanvas(windowWidth, windowHeight)
   rectMode(CENTER).noFill().frameRate(30);
 
-  numberOfShapesControl = select("#sizeSlider");
+  scene = new Scene();
+
+  controlDiv = select("#controlDiv");
+  controlDiv.mouseOver(function() {
+    mouseOverControl = true;
+    noCursor();
+  });
+  controlDiv.mouseOut(function() {
+    mouseOverControl = false;
+    cursor(ARROW);
+  });
+
   toolLabel = select("#toolLabel");
 
-  dummySupport = new SESupport(createVector(-1,-1));
+  dummySupport = new SENode(createVector(-100,-100),true);
   dummySupport.visible = false;
 
-  dummyNode = new SENode(createVector(-1,-1));
+  dummyNode = new SENode(createVector(-100,-100),false);
   dummyNode.visible = false;
+
+  dummyBeam = new SEBeam(null,null);
 
   setupControl();
 }
@@ -54,6 +72,15 @@ function draw() {
       dummyNode.position.y = mouseY;
       dummyNode.draw();
     break;
+
+    case MouseMode.PLACE_BEAM_B:
+      dummyBeam.dummyB = createVector(mouseX, mouseY);
+      dummyBeam.draw();
+    break;
+  }
+
+  if (scene.simMode == SimMode.PLAYING) {
+    scene.tick();
   }
 
   scene.draw();
@@ -75,6 +102,17 @@ function switchMode(mode: MouseMode) {
       dummyNode.visible = true;
       toolLabel.html("Node");
     break;
+
+    case MouseMode.PLACE_BEAM_A:
+      dummyBeam = new SEBeam(null,null);
+      dummyBeam.visible = true;
+      toolLabel.html("Beam First Node");
+    break;
+
+    case MouseMode.PLACE_BEAM_B:
+      dummyBeam.visible = true;
+      toolLabel.html("Beam Second Node");
+    break;
   }
 }
 
@@ -89,6 +127,27 @@ function setupControl() {
   buttonNode.mousePressed(function() {
     switchMode(MouseMode.PLACE_NODE);
   });
+
+  let buttonBeam = select("#buttonCreateBeam");
+  buttonBeam.mousePressed(function() {
+    switchMode(MouseMode.PLACE_BEAM_A);
+  });
+
+  let buttonPlay = select("#buttonPlay");
+  buttonPlay.mousePressed(function() {
+    scene.switchSimMode(SimMode.PLAYING);
+  });
+
+  let buttonPause = select("#buttonPause");
+  buttonPause.mousePressed(function() {
+    scene.switchSimMode(SimMode.PAUSED);
+  });
+
+  let buttonReset = select("#buttonReset");
+  buttonReset.mousePressed(function() {
+    scene.switchSimMode(SimMode.STOPPED);
+    scene.clear();
+  });
 }
 
 function keyPressed() {
@@ -97,44 +156,45 @@ function keyPressed() {
   }
 }
 
-function mousePressed() {
+function mousePressed():void {
+  if (mouseOverControl) {
+    return;
+  }
+
   switch(currentMode) {
     case MouseMode.EMPTY:
 
     break;
 
     case MouseMode.PLACE_SUPPORT:
-      scene.addElement(new SESupport(createVector(mouseX, mouseY)));
+      scene.addElement(new SENode(createVector(mouseX, mouseY),true));
     break;
 
     case MouseMode.PLACE_NODE:
-      scene.addElement(new SENode(createVector(mouseX, mouseY)));
+      scene.addElement(new SENode(createVector(mouseX, mouseY),false));
+    break;
+
+    case MouseMode.PLACE_BEAM_A:
+      var nodePick:SENode = scene.pickNode(createVector(mouseX,mouseY));
+      if (nodePick) {
+        dummyBeam.childA = nodePick;
+        switchMode(MouseMode.PLACE_BEAM_B);
+      }
+    break;
+
+    case MouseMode.PLACE_BEAM_B:
+      var nodePick:SENode = scene.pickNode(createVector(mouseX,mouseY));
+      if (nodePick) {
+        dummyBeam.childB = nodePick;
+        scene.addElement(dummyBeam);
+        switchMode(MouseMode.EMPTY);
+      }
     break;
   }
+
+  
 }
 
-function drawSpirograph() {
-// CENTER OF SCREEN
-translate(width / 2,height / 2);
 
-const numberOfShapes = <number>numberOfShapesControl.value();
-const colours = ColorHelper.getColorsArray(numberOfShapes);
 
-// CONSISTENT SPEED REGARDLESS OF FRAMERATE
-const speed = (frameCount / (numberOfShapes * 30)) * 2;
-
-// DRAW ALL SHAPES
-for (var i = 0; i < numberOfShapes; i++) {
-  push();
-    const lineWidth = 8;
-    const spin = speed * (numberOfShapes - i);
-    const numberOfSides = 4;
-    const width = 40 * i;
-    strokeWeight(lineWidth); 
-    stroke(colours[i]);
-    rotate(spin);
-    PolygonHelper.draw(numberOfSides, width)
-  pop();
-}
-}
 
