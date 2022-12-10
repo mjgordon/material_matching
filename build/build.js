@@ -95,6 +95,11 @@ var Scene = (function () {
         this.sceneElements = [];
         this.nodes = [];
     };
+    Scene.prototype.reset = function () {
+        this.nodes.forEach(function (node) {
+            node.simInit();
+        });
+    };
     Scene.prototype.tick = function () {
         var gravity = this.gravity;
         this.nodes.forEach(function (node) {
@@ -366,7 +371,7 @@ function setupControl() {
     var buttonReset = select("#buttonReset");
     buttonReset.mousePressed(function () {
         scene.switchSimMode(SimMode.STOPPED);
-        scene.clear();
+        scene.reset();
     });
 }
 function keyPressed() {

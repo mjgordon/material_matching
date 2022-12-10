@@ -151,7 +151,7 @@ function setupControl() {
   let buttonReset = select("#buttonReset");
   buttonReset.mousePressed(function() {
     scene.switchSimMode(SimMode.STOPPED);
-    scene.clear();
+    scene.reset();
   });
 }
 

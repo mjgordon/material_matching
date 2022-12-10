@@ -39,6 +39,12 @@ class Scene{
         this.nodes = [];
     }
 
+    reset() {
+        this.nodes.forEach(function(node) {
+            node.simInit();
+        });
+    }
+
     tick() {
         let gravity:number = this.gravity;
         this.nodes.forEach(function(node) {
