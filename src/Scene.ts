@@ -9,6 +9,8 @@ class Scene{
     nodes: SENode[] = [];
     beams: SEBeam[] = [];
 
+    selectedNode:SENode = null;
+
     gravity:number = 0.02;
 
     sceneWidth: number = 800;
@@ -16,14 +18,13 @@ class Scene{
 
     simMode:SimMode = SimMode.STOPPED;
 
-
     draw() {
-        this.beams.forEach(function(se) {
-            se.draw();
-        });
-        this.nodes.forEach(function(se) {
-            se.draw();
-        });
+        for (let se of this.beams) {
+            se.draw(false);
+        }
+        for (const se of this.nodes) {
+            se.draw(se.equals(this.selectedNode));
+        }
     }
 
     addElement(se:SceneElement) {
@@ -44,32 +45,29 @@ class Scene{
     }
 
     reset() {
-        this.nodes.forEach(function(node) {
-            node.simInit();
-        });
+        for (const se of this.sceneElements) {
+            se.simInit();
+        }
     }
 
     tick() {
-        let gravity:number = this.gravity;
-        this.nodes.forEach(function(node) {
-            node.simAcceleration.y = gravity;
+        for (const node of this.nodes) {
+            node.simAcceleration.y = this.gravity;
             node.simTick();
 
             if (node.position.y > height) {
                 node.position.y = height;
             }
-        });
+        }
 
-        this.beams.forEach(function(beam) {
+        for (const beam of this.beams) {
             beam.simTick();
-        });
+        }
     }
 
     switchSimMode(mode:SimMode):void {
         if (this.simMode == SimMode.STOPPED && mode == SimMode.PLAYING) {
-            this.sceneElements.forEach(function(se) {
-                se.simInit();
-              });
+            this.reset();
         }
         this.simMode = mode;
         simLabel.html(mode);
@@ -80,15 +78,16 @@ class Scene{
         let bestNode:SENode = null;
         let bestDist:number = 10000;
 
-        this.nodes.forEach(function(n) {
-            let d:number = vMouse.dist(n.simPosition);
+        for (const node of this.nodes) {
+            let d:number = vMouse.dist(node.simPosition);
             if (d < clickRadius) {
                 if (bestNode == null || d < bestDist) {
-                    bestNode = n;
+                    bestNode = node;
                     bestDist = d;
                 }
             }
-        });
+        }
+        
 
         return bestNode
     }

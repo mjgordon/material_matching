@@ -72,18 +72,21 @@ var Scene = (function () {
         this.sceneElements = [];
         this.nodes = [];
         this.beams = [];
+        this.selectedNode = null;
         this.gravity = 0.02;
         this.sceneWidth = 800;
         this.sceneHeight = 600;
         this.simMode = SimMode.STOPPED;
     }
     Scene.prototype.draw = function () {
-        this.beams.forEach(function (se) {
-            se.draw();
-        });
-        this.nodes.forEach(function (se) {
-            se.draw();
-        });
+        for (var _i = 0, _a = this.beams; _i < _a.length; _i++) {
+            var se = _a[_i];
+            se.draw(false);
+        }
+        for (var _b = 0, _c = this.nodes; _b < _c.length; _b++) {
+            var se = _c[_b];
+            se.draw(se.equals(this.selectedNode));
+        }
     };
     Scene.prototype.addElement = function (se) {
         this.sceneElements.push(se);
@@ -100,28 +103,28 @@ var Scene = (function () {
         this.beams = [];
     };
     Scene.prototype.reset = function () {
-        this.nodes.forEach(function (node) {
-            node.simInit();
-        });
+        for (var _i = 0, _a = this.sceneElements; _i < _a.length; _i++) {
+            var se = _a[_i];
+            se.simInit();
+        }
     };
     Scene.prototype.tick = function () {
-        var gravity = this.gravity;
-        this.nodes.forEach(function (node) {
-            node.simAcceleration.y = gravity;
+        for (var _i = 0, _a = this.nodes; _i < _a.length; _i++) {
+            var node = _a[_i];
+            node.simAcceleration.y = this.gravity;
             node.simTick();
             if (node.position.y > height) {
                 node.position.y = height;
             }
-        });
-        this.beams.forEach(function (beam) {
+        }
+        for (var _b = 0, _c = this.beams; _b < _c.length; _b++) {
+            var beam = _c[_b];
             beam.simTick();
-        });
+        }
     };
     Scene.prototype.switchSimMode = function (mode) {
         if (this.simMode == SimMode.STOPPED && mode == SimMode.PLAYING) {
-            this.sceneElements.forEach(function (se) {
-                se.simInit();
-            });
+            this.reset();
         }
         this.simMode = mode;
         simLabel.html(mode);
@@ -130,15 +133,16 @@ var Scene = (function () {
         var clickRadius = 20;
         var bestNode = null;
         var bestDist = 10000;
-        this.nodes.forEach(function (n) {
-            var d = vMouse.dist(n.simPosition);
+        for (var _i = 0, _a = this.nodes; _i < _a.length; _i++) {
+            var node = _a[_i];
+            var d = vMouse.dist(node.simPosition);
             if (d < clickRadius) {
                 if (bestNode == null || d < bestDist) {
-                    bestNode = n;
+                    bestNode = node;
                     bestDist = d;
                 }
             }
-        });
+        }
         return bestNode;
     };
     return Scene;
@@ -159,7 +163,17 @@ var __extends = (this && this.__extends) || (function () {
 var SceneElement = (function () {
     function SceneElement() {
         this.visible = true;
+        this.id = -1;
+        this.id = SceneElement.counter;
+        SceneElement.counter += 1;
     }
+    SceneElement.prototype.equals = function (se) {
+        if (se == null) {
+            return false;
+        }
+        return this.id == se.id;
+    };
+    SceneElement.counter = 0;
     return SceneElement;
 }());
 var SENode = (function (_super) {
@@ -171,12 +185,18 @@ var SENode = (function (_super) {
         _this.support = support;
         return _this;
     }
-    SENode.prototype.draw = function () {
+    SENode.prototype.draw = function (isSelected) {
         if (!this.visible) {
             return;
         }
-        stroke(0);
-        strokeWeight(1);
+        if (isSelected) {
+            stroke(255);
+            strokeWeight(2);
+        }
+        else {
+            stroke(0);
+            strokeWeight(1);
+        }
         if (this.support) {
             fill(64);
         }
@@ -205,6 +225,9 @@ var SENode = (function (_super) {
     SENode.prototype.simSetAcceleration = function (accel) {
         this.simAcceleration.set(accel);
     };
+    SENode.prototype.getDisplayName = function () {
+        return (this.support ? "Suport" : "Node");
+    };
     SENode.simDrag = 0.99;
     SENode.simMaxSpeed = 20;
     SENode.nodeSize = 20;
@@ -223,7 +246,7 @@ var SEBeam = (function (_super) {
         }
         return _this;
     }
-    SEBeam.prototype.draw = function () {
+    SEBeam.prototype.draw = function (isSelected) {
         if (!this.visible) {
             return;
         }
@@ -261,12 +284,16 @@ var SEBeam = (function (_super) {
             }
         }
     };
+    SEBeam.prototype.getDisplayName = function () {
+        return ("Beam");
+    };
     return SEBeam;
 }(SceneElement));
 var controlDiv = null;
 var scene = null;
 var toolLabel = null;
 var simLabel = null;
+var selectedNameLabel = null;
 var MouseMode;
 (function (MouseMode) {
     MouseMode[MouseMode["EMPTY"] = 0] = "EMPTY";
@@ -296,6 +323,7 @@ function setup() {
     });
     toolLabel = select("#toolLabel");
     simLabel = select("#simLabel");
+    selectedNameLabel = select("#selectedNameLabel");
     dummySupport = new SENode(createVector(-100, -100), true);
     dummySupport.visible = false;
     dummyNode = new SENode(createVector(-100, -100), false);
@@ -322,24 +350,33 @@ function draw() {
             dummySupport.position.y = mouseY;
             dummySupport.simPosition.x = mouseX;
             dummySupport.simPosition.y = mouseY;
-            dummySupport.draw();
+            dummySupport.draw(false);
             break;
         case MouseMode.PLACE_NODE:
             dummyNode.position.x = mouseX;
             dummyNode.position.y = mouseY;
             dummyNode.simPosition.x = mouseX;
             dummyNode.simPosition.y = mouseY;
-            dummyNode.draw();
+            dummyNode.draw(false);
             break;
         case MouseMode.PLACE_BEAM_B:
             dummyBeam.dummyB = createVector(mouseX, mouseY);
-            dummyBeam.draw();
+            dummyBeam.draw(false);
             break;
     }
     if (scene.simMode == SimMode.PLAYING) {
         scene.tick();
     }
     scene.draw();
+}
+function setSelectedElement(se) {
+    scene.selectedNode = se;
+    if (se == null) {
+        selectedNameLabel.html("");
+    }
+    else {
+        selectedNameLabel.html(se.getDisplayName() + " " + se.id);
+    }
 }
 function switchMode(mode) {
     currentMode = mode;
@@ -449,6 +486,8 @@ function mousePressed() {
     }
     switch (currentMode) {
         case MouseMode.EMPTY:
+            var nodePick = scene.pickNode(createVector(mouseX, mouseY));
+            setSelectedElement(nodePick);
             break;
         case MouseMode.PLACE_SUPPORT:
             scene.addElement(new SENode(createVector(mouseX, mouseY), true));

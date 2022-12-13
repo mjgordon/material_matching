@@ -1,9 +1,27 @@
 abstract class SceneElement {
-    visible: boolean = true;
+    static counter:number = 0;
 
-    abstract draw(): void;
+    visible:boolean = true;
+    id:number = -1;
+
+    constructor() {
+        this.id = SceneElement.counter;
+        SceneElement.counter += 1;
+    }
+
+    equals(se:SceneElement):boolean {
+        if (se == null) {
+            return false;
+        }
+        return this.id == se.id;
+    }
+
+    abstract draw(isSelected:boolean): void;
     abstract simInit():void;
     abstract simTick():void;
+    abstract getDisplayName():string;
+
+
 }
 
 
@@ -28,13 +46,21 @@ class SENode extends SceneElement {
         this.support = support;
     }
 
-    draw(): void {
+    draw(isSelected:boolean): void {
         if (!this.visible) {
             return;
         }
 
-        stroke(0);
-        strokeWeight(1);
+        if (isSelected) {
+            stroke(255);
+            strokeWeight(2);
+        }
+        else {
+            stroke(0);
+            strokeWeight(1);
+        }
+        
+        
         if (this.support) {
             fill(64);
         }
@@ -67,6 +93,10 @@ class SENode extends SceneElement {
     simSetAcceleration(accel:p5.Vector):void {
         this.simAcceleration.set(accel);
     }
+
+    getDisplayName(): string {
+        return(this.support ? "Suport" : "Node");
+    }
 }
 
 class SEBeam extends SceneElement {
@@ -88,7 +118,7 @@ class SEBeam extends SceneElement {
         }
     }
 
-    draw(): void {
+    draw(isSelected:boolean): void {
         if (!this.visible) {
             return;
         }
@@ -132,5 +162,9 @@ class SEBeam extends SceneElement {
                 this.childB.simVelocity.add(pushDelta);
             }
         }
+    }
+
+    getDisplayName(): string {
+        return("Beam");
     }
 }

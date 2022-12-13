@@ -4,6 +4,8 @@ let scene:Scene = null;
 let toolLabel: p5.Element = null;
 let simLabel: p5.Element = null;
 
+let selectedNameLabel: p5.Element = null;
+
 enum MouseMode {
   EMPTY,
   PLACE_SUPPORT,
@@ -43,6 +45,8 @@ function setup() {
   toolLabel = select("#toolLabel");
   simLabel = select("#simLabel");
 
+  selectedNameLabel = select("#selectedNameLabel");
+
   dummySupport = new SENode(createVector(-100,-100),true);
   dummySupport.visible = false;
 
@@ -78,7 +82,7 @@ function draw() {
 
       dummySupport.simPosition.x = mouseX;
       dummySupport.simPosition.y = mouseY;
-      dummySupport.draw();
+      dummySupport.draw(false);
     break;
 
     case MouseMode.PLACE_NODE:
@@ -86,12 +90,12 @@ function draw() {
       dummyNode.position.y = mouseY;
       dummyNode.simPosition.x = mouseX;
       dummyNode.simPosition.y = mouseY;
-      dummyNode.draw();
+      dummyNode.draw(false);
     break;
 
     case MouseMode.PLACE_BEAM_B:
       dummyBeam.dummyB = createVector(mouseX, mouseY);
-      dummyBeam.draw();
+      dummyBeam.draw(false);
     break;
   }
 
@@ -100,6 +104,17 @@ function draw() {
   }
 
   scene.draw();
+}
+
+
+function setSelectedElement(se:SENode):void {
+  scene.selectedNode = se;
+  if (se == null) {
+    selectedNameLabel.html("");
+  }
+  else {
+    selectedNameLabel.html( se.getDisplayName() + " " + se.id);
+  }
 }
 
 function switchMode(mode: MouseMode) {
@@ -233,7 +248,8 @@ function mousePressed():void {
 
   switch(currentMode) {
     case MouseMode.EMPTY:
-
+      var nodePick:SENode = scene.pickNode(createVector(mouseX,mouseY));
+      setSelectedElement(nodePick);
     break;
 
     case MouseMode.PLACE_SUPPORT:
