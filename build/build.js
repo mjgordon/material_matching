@@ -404,53 +404,6 @@ function switchMode(mode) {
             break;
     }
 }
-function setupControl() {
-    var buttonSupport = select("#buttonCreateSupport");
-    buttonSupport.mousePressed(function () {
-        switchMode(MouseMode.PLACE_SUPPORT);
-    });
-    var buttonNode = select("#buttonCreateNode");
-    buttonNode.mousePressed(function () {
-        switchMode(MouseMode.PLACE_NODE);
-    });
-    var buttonBeam = select("#buttonCreateBeam");
-    buttonBeam.mousePressed(function () {
-        switchMode(MouseMode.PLACE_BEAM_A);
-    });
-    var buttonPlay = select("#buttonPlay");
-    buttonPlay.mousePressed(function () {
-        scene.switchSimMode(SimMode.PLAYING);
-    });
-    var buttonPause = select("#buttonPause");
-    buttonPause.mousePressed(function () {
-        scene.switchSimMode(SimMode.PAUSED);
-    });
-    var buttonReset = select("#buttonReset");
-    buttonReset.mousePressed(function () {
-        scene.switchSimMode(SimMode.STOPPED);
-        scene.reset();
-    });
-    var buttonDemo = select("#buttonLoadDemo");
-    buttonDemo.mousePressed(function () {
-        scene.clear();
-        scene.addElement(new SENode(createVector(600, 600), true));
-        scene.addElement(new SENode(createVector(800, 600), true));
-        scene.addElement(new SENode(createVector(600, 500), false));
-        scene.addElement(new SENode(createVector(800, 500), false));
-        scene.addElement(new SENode(createVector(600, 400), false));
-        scene.addElement(new SENode(createVector(800, 400), false));
-        scene.addElement(new SEBeam(scene.nodes[0], scene.nodes[2]));
-        scene.addElement(new SEBeam(scene.nodes[1], scene.nodes[3]));
-        scene.addElement(new SEBeam(scene.nodes[2], scene.nodes[3]));
-        scene.addElement(new SEBeam(scene.nodes[4], scene.nodes[5]));
-        scene.addElement(new SEBeam(scene.nodes[2], scene.nodes[4]));
-        scene.addElement(new SEBeam(scene.nodes[3], scene.nodes[5]));
-        scene.addElement(new SEBeam(scene.nodes[0], scene.nodes[3]));
-        scene.addElement(new SEBeam(scene.nodes[1], scene.nodes[2]));
-        scene.addElement(new SEBeam(scene.nodes[2], scene.nodes[5]));
-        scene.addElement(new SEBeam(scene.nodes[3], scene.nodes[4]));
-    });
-}
 function keyPressed() {
     if (keyCode == ESCAPE) {
         switchMode(MouseMode.EMPTY);
@@ -512,5 +465,52 @@ function mousePressed() {
             }
             break;
     }
+}
+function setupControl() {
+    var buttonSupport = select("#buttonCreateSupport");
+    buttonSupport.mousePressed(function () {
+        switchMode(MouseMode.PLACE_SUPPORT);
+    });
+    var buttonNode = select("#buttonCreateNode");
+    buttonNode.mousePressed(function () {
+        switchMode(MouseMode.PLACE_NODE);
+    });
+    var buttonBeam = select("#buttonCreateBeam");
+    buttonBeam.mousePressed(function () {
+        switchMode(MouseMode.PLACE_BEAM_A);
+    });
+    var buttonPlay = select("#buttonPlay");
+    buttonPlay.mousePressed(function () {
+        scene.switchSimMode(SimMode.PLAYING);
+    });
+    var buttonPause = select("#buttonPause");
+    buttonPause.mousePressed(function () {
+        scene.switchSimMode(SimMode.PAUSED);
+    });
+    var buttonReset = select("#buttonReset");
+    buttonReset.mousePressed(function () {
+        scene.switchSimMode(SimMode.STOPPED);
+        scene.reset();
+    });
+    var buttonDemo = select("#buttonLoadDemo");
+    buttonDemo.mousePressed(function () {
+        scene.clear();
+        scene.addElement(new SENode(createVector(600, 600), true));
+        scene.addElement(new SENode(createVector(800, 600), true));
+        scene.addElement(new SENode(createVector(600, 500), false));
+        scene.addElement(new SENode(createVector(800, 500), false));
+        scene.addElement(new SENode(createVector(600, 400), false));
+        scene.addElement(new SENode(createVector(800, 400), false));
+        scene.addElement(new SEBeam(scene.nodes[0], scene.nodes[2]));
+        scene.addElement(new SEBeam(scene.nodes[1], scene.nodes[3]));
+        scene.addElement(new SEBeam(scene.nodes[2], scene.nodes[3]));
+        scene.addElement(new SEBeam(scene.nodes[4], scene.nodes[5]));
+        scene.addElement(new SEBeam(scene.nodes[2], scene.nodes[4]));
+        scene.addElement(new SEBeam(scene.nodes[3], scene.nodes[5]));
+        scene.addElement(new SEBeam(scene.nodes[0], scene.nodes[3]));
+        scene.addElement(new SEBeam(scene.nodes[1], scene.nodes[2]));
+        scene.addElement(new SEBeam(scene.nodes[2], scene.nodes[5]));
+        scene.addElement(new SEBeam(scene.nodes[3], scene.nodes[4]));
+    });
 }
 //# sourceMappingURL=build.js.map
