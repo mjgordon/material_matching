@@ -9,7 +9,7 @@ class Scene{
     nodes: SENode[] = [];
     beams: SEBeam[] = [];
 
-    selectedNode:SENode = null;
+    selectedElement:SceneElement = null;
 
     gravity:number = 0.02;
 
@@ -19,11 +19,11 @@ class Scene{
     simMode:SimMode = SimMode.STOPPED;
 
     draw() {
-        for (let se of this.beams) {
-            se.draw(false);
+        for (const se of this.beams) {
+            se.draw(se.equals(this.selectedElement));
         }
         for (const se of this.nodes) {
-            se.draw(se.equals(this.selectedNode));
+            se.draw(se.equals(this.selectedElement));
         }
     }
 
@@ -71,6 +71,39 @@ class Scene{
         }
         this.simMode = mode;
         simLabel.html(mode);
+    }
+
+
+    pickElement(vMouse:p5.Vector):SceneElement {
+        let clickRadius:number = 20;
+        let bestElement:SceneElement = null;
+        let bestDist:number = 10000;
+
+        for (const beam of this.beams) {
+            const [beamPoint, d] = beam.getClosestPoint(vMouse);
+            if (d < clickRadius) {
+                if (bestElement == null || d < bestDist) {
+                    bestElement = beam;
+                    bestDist = d;
+                }
+            }
+        }
+        
+        if (bestDist < clickRadius) {
+            bestDist = clickRadius;
+        }
+
+        for (const node of this.nodes) {
+            let d:number = vMouse.dist(node.simPosition);
+            if (d < clickRadius) {
+                if (bestElement == null || d < bestDist) {
+                    bestElement = node;
+                    bestDist = d;
+                }
+            }
+        }
+
+        return bestElement;
     }
 
     pickNode(vMouse:p5.Vector):SENode {

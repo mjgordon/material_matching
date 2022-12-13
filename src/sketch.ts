@@ -111,8 +111,8 @@ function draw() {
  * Change the current selected element in the scene, including to null
  * @param se 
  */
-function setSelectedElement(se:SENode):void {
-  scene.selectedNode = se;
+function setSelectedElement(se:SceneElement):void {
+  scene.selectedElement = se;
   if (se == null) {
     selectedNameLabel.html("");
   }
@@ -199,8 +199,8 @@ function mousePressed():void {
 
   switch(currentMode) {
     case MouseMode.EMPTY:
-      var nodePick:SENode = scene.pickNode(createVector(mouseX,mouseY));
-      setSelectedElement(nodePick);
+      var elementPick:SceneElement = scene.pickElement(createVector(mouseX,mouseY));
+      setSelectedElement(elementPick);
     break;
 
     case MouseMode.PLACE_SUPPORT:

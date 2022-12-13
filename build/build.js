@@ -43,24 +43,6 @@ var ColorHelper = (function () {
     };
     return ColorHelper;
 }());
-var PolygonHelper = (function () {
-    function PolygonHelper() {
-    }
-    PolygonHelper.draw = function (numberOfSides, width) {
-        push();
-        var angle = TWO_PI / numberOfSides;
-        var radius = width / 2;
-        beginShape();
-        for (var a = 0; a < TWO_PI; a += angle) {
-            var sx = cos(a) * radius;
-            var sy = sin(a) * radius;
-            vertex(sx, sy);
-        }
-        endShape(CLOSE);
-        pop();
-    };
-    return PolygonHelper;
-}());
 var SimMode;
 (function (SimMode) {
     SimMode["STOPPED"] = "Stopped";
@@ -72,7 +54,7 @@ var Scene = (function () {
         this.sceneElements = [];
         this.nodes = [];
         this.beams = [];
-        this.selectedNode = null;
+        this.selectedElement = null;
         this.gravity = 0.02;
         this.sceneWidth = 800;
         this.sceneHeight = 600;
@@ -81,11 +63,11 @@ var Scene = (function () {
     Scene.prototype.draw = function () {
         for (var _i = 0, _a = this.beams; _i < _a.length; _i++) {
             var se = _a[_i];
-            se.draw(false);
+            se.draw(se.equals(this.selectedElement));
         }
         for (var _b = 0, _c = this.nodes; _b < _c.length; _b++) {
             var se = _c[_b];
-            se.draw(se.equals(this.selectedNode));
+            se.draw(se.equals(this.selectedElement));
         }
     };
     Scene.prototype.addElement = function (se) {
@@ -128,6 +110,35 @@ var Scene = (function () {
         }
         this.simMode = mode;
         simLabel.html(mode);
+    };
+    Scene.prototype.pickElement = function (vMouse) {
+        var clickRadius = 20;
+        var bestElement = null;
+        var bestDist = 10000;
+        for (var _i = 0, _a = this.beams; _i < _a.length; _i++) {
+            var beam = _a[_i];
+            var _b = beam.getClosestPoint(vMouse), beamPoint = _b[0], d = _b[1];
+            if (d < clickRadius) {
+                if (bestElement == null || d < bestDist) {
+                    bestElement = beam;
+                    bestDist = d;
+                }
+            }
+        }
+        if (bestDist < clickRadius) {
+            bestDist = clickRadius;
+        }
+        for (var _c = 0, _d = this.nodes; _c < _d.length; _c++) {
+            var node = _d[_c];
+            var d = vMouse.dist(node.simPosition);
+            if (d < clickRadius) {
+                if (bestElement == null || d < bestDist) {
+                    bestElement = node;
+                    bestDist = d;
+                }
+            }
+        }
+        return bestElement;
     };
     Scene.prototype.pickNode = function (vMouse) {
         var clickRadius = 20;
@@ -251,7 +262,12 @@ var SEBeam = (function (_super) {
             return;
         }
         if (this.childA) {
-            stroke(0);
+            if (isSelected) {
+                stroke(255);
+            }
+            else {
+                stroke(0);
+            }
             strokeWeight(3);
             if (this.childB) {
                 line(this.childA.simPosition.x, this.childA.simPosition.y, this.childB.simPosition.x, this.childB.simPosition.y);
@@ -286,6 +302,19 @@ var SEBeam = (function (_super) {
     };
     SEBeam.prototype.getDisplayName = function () {
         return ("Beam");
+    };
+    SEBeam.prototype.getClosestPoint = function (vec) {
+        var a = this.childA.position;
+        var b = this.childB.position;
+        var l2 = this.distSquared(a, b);
+        if (l2 == 0.0)
+            return ([a, vec.dist(a)]);
+        var t = Math.max(0, Math.min(1, p5.Vector.dot(p5.Vector.sub(vec, a), p5.Vector.sub(b, a)) / l2));
+        var projection = p5.Vector.add(a, p5.Vector.sub(b, a).mult(t));
+        return ([projection, projection.dist(vec)]);
+    };
+    SEBeam.prototype.distSquared = function (a, b) {
+        return (Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) + Math.pow(a.z - b.z, 2));
     };
     return SEBeam;
 }(SceneElement));
@@ -370,7 +399,7 @@ function draw() {
     scene.draw();
 }
 function setSelectedElement(se) {
-    scene.selectedNode = se;
+    scene.selectedElement = se;
     if (se == null) {
         selectedNameLabel.html("");
     }
@@ -439,8 +468,8 @@ function mousePressed() {
     }
     switch (currentMode) {
         case MouseMode.EMPTY:
-            var nodePick = scene.pickNode(createVector(mouseX, mouseY));
-            setSelectedElement(nodePick);
+            var elementPick = scene.pickElement(createVector(mouseX, mouseY));
+            setSelectedElement(elementPick);
             break;
         case MouseMode.PLACE_SUPPORT:
             scene.addElement(new SENode(createVector(mouseX, mouseY), true));

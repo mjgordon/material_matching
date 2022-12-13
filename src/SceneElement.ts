@@ -124,7 +124,12 @@ class SEBeam extends SceneElement {
         }
 
         if (this.childA) {
-            stroke(0);
+            if (isSelected) {
+                stroke(255);
+            }
+            else {
+                stroke(0);
+            }
             strokeWeight(3);
             if (this.childB) {
                 line(this.childA.simPosition.x,this.childA.simPosition.y, this.childB.simPosition.x,this.childB.simPosition.y);
@@ -166,5 +171,26 @@ class SEBeam extends SceneElement {
 
     getDisplayName(): string {
         return("Beam");
+    }
+
+    getClosestPoint(vec:p5.Vector):[p5.Vector,number] {
+        const a:p5.Vector = this.childA.position;
+        const b:p5.Vector = this.childB.position;
+        const l2:number = this.distSquared(a,b);
+        if (l2 == 0.0) return([a, vec.dist(a)]);
+        const t:number = Math.max(0, Math.min(1, p5.Vector.dot(p5.Vector.sub(vec,a), p5.Vector.sub(b,a)) / l2));
+        const projection:p5.Vector = p5.Vector.add(a, p5.Vector.sub(b, a).mult(t));
+        return( [ projection, projection.dist(vec)]);
+    }
+
+
+    /**
+     * Refactor where this lives
+     * @param a 
+     * @param b 
+     * @returns 
+     */
+    distSquared(a:p5.Vector, b: p5.Vector) {
+        return (Math.pow(a.x - b.x,2) + Math.pow(a.y - b.y,2) + Math.pow(a.z - b.z,2));
     }
 }
