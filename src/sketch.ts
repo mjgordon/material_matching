@@ -6,6 +6,9 @@ let simLabel: p5.Element = null;
 
 let selectedNameLabel: p5.Element = null;
 
+let designPartTypeDiv: p5.Element = null;
+let stockPieceDiv: p5.Element = null;
+
 enum MouseMode {
   EMPTY,
   PLACE_SUPPORT,
@@ -47,6 +50,9 @@ function setup() {
 
   selectedNameLabel = select("#selectedNameLabel");
 
+  designPartTypeDiv = select("#matchingList");
+  stockPieceDiv = select("#stockList");
+
   dummySupport = new SENode(createVector(-100,-100),true);
   dummySupport.visible = false;
 
@@ -54,6 +60,9 @@ function setup() {
   dummyNode.visible = false;
 
   dummyBeam = new SEBeam(null,null);
+
+  uiUpdateStockPieces();
+
 
   setupControl();
 }
@@ -117,7 +126,15 @@ function setSelectedElement(se:SceneElement):void {
     selectedNameLabel.html("");
   }
   else {
-    selectedNameLabel.html( se.getDisplayName() + " " + se.id);
+    let contentString = se.getDisplayName() + " " + se.id + "<br>";
+    if (se instanceof SENode) {
+      contentString += "Position : " + se.position.x + "," + se.position.y + "," + se.position.z;
+    }
+    else if (se instanceof SEBeam) {
+      let restLength = int(se.restLength * 1000) / 1000.0;
+      contentString += "Length : " + restLength;
+    }
+    selectedNameLabel.html( contentString);
   }
 }
 
@@ -233,6 +250,41 @@ function mousePressed():void {
 
 
 /**
+ * Updates the html list showing the current design parts
+ */
+function uiUpdateDesignParts() {
+  let hashMap:Map<string, number> = scene.getDesignParts();
+
+  let contentString: string = "<table><tr><th>Length</th><th></th><th>Count</th></tr>";
+
+  for (const [key, value] of hashMap) {
+    contentString += "<tr><td>" + key + "</td><td>&nbsp:&nbsp</td><td>" + value + "</td></tr>"
+  }
+
+  contentString += "</table>";
+
+  designPartTypeDiv.html(contentString);
+}
+
+
+/**
+ * Updates the html list showing the current stock pieces
+ */
+function uiUpdateStockPieces() {
+  let contentString: string = "<table><tr><th>Id</th><th></th><th>Length</th></tr>";
+  let counter = 0;
+  
+  for (const sp of scene.stock) {
+    contentString += "<tr><td>" + counter + "</td><td>&nbsp:&nbsp</td><td>" + sp.size + "</td></tr>"
+    counter += 1;
+  }
+  contentString += "</table>";
+
+  stockPieceDiv.html(contentString);
+}
+
+
+/**
  * Attach functionality to HTML Objects
  */
 function setupControl() {
@@ -290,6 +342,8 @@ function setupControl() {
 
     scene.addElement(new SEBeam(scene.nodes[2],scene.nodes[5]));
     scene.addElement(new SEBeam(scene.nodes[3],scene.nodes[4]));
+
+    uiUpdateDesignParts();
   });
 }
 

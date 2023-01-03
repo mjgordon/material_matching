@@ -1,10 +1,8 @@
-var ColorHelper = (function () {
-    function ColorHelper() {
-    }
-    ColorHelper.getColorVector = function (c) {
+class ColorHelper {
+    static getColorVector(c) {
         return createVector(red(c), green(c), blue(c));
-    };
-    ColorHelper.rainbowColorBase = function () {
+    }
+    static rainbowColorBase() {
         return [
             color('red'),
             color('orange'),
@@ -14,16 +12,14 @@ var ColorHelper = (function () {
             color('indigo'),
             color('violet')
         ];
-    };
-    ColorHelper.getColorsArray = function (total, baseColorArray) {
-        var _this = this;
-        if (baseColorArray === void 0) { baseColorArray = null; }
+    }
+    static getColorsArray(total, baseColorArray = null) {
         if (baseColorArray == null) {
             baseColorArray = ColorHelper.rainbowColorBase();
         }
-        var rainbowColors = baseColorArray.map(function (x) { return _this.getColorVector(x); });
+        var rainbowColors = baseColorArray.map(x => this.getColorVector(x));
         ;
-        var colours = new Array();
+        let colours = new Array();
         for (var i = 0; i < total; i++) {
             var colorPosition = i / total;
             var scaledColorPosition = colorPosition * (rainbowColors.length - 1);
@@ -33,44 +29,43 @@ var ColorHelper = (function () {
             colours.push(color(nameColor.x, nameColor.y, nameColor.z));
         }
         return colours;
-    };
-    ColorHelper.getColorByPercentage = function (firstColor, secondColor, percentage) {
+    }
+    static getColorByPercentage(firstColor, secondColor, percentage) {
         var firstColorCopy = firstColor.copy();
         var secondColorCopy = secondColor.copy();
         var deltaColor = secondColorCopy.sub(firstColorCopy);
         var scaledDeltaColor = deltaColor.mult(percentage);
         return firstColorCopy.add(scaledDeltaColor);
-    };
-    return ColorHelper;
-}());
+    }
+}
 var SimMode;
 (function (SimMode) {
     SimMode["STOPPED"] = "Stopped";
     SimMode["PLAYING"] = "Playing";
     SimMode["PAUSED"] = "Paused";
 })(SimMode || (SimMode = {}));
-var Scene = (function () {
-    function Scene() {
+class Scene {
+    constructor() {
         this.sceneElements = [];
         this.nodes = [];
         this.beams = [];
+        this.stock = [];
         this.selectedElement = null;
         this.gravity = 0.02;
         this.sceneWidth = 800;
         this.sceneHeight = 600;
         this.simMode = SimMode.STOPPED;
+        this.loadDefaultStock();
     }
-    Scene.prototype.draw = function () {
-        for (var _i = 0, _a = this.beams; _i < _a.length; _i++) {
-            var se = _a[_i];
+    draw() {
+        for (const se of this.beams) {
             se.draw(se.equals(this.selectedElement));
         }
-        for (var _b = 0, _c = this.nodes; _b < _c.length; _b++) {
-            var se = _c[_b];
+        for (const se of this.nodes) {
             se.draw(se.equals(this.selectedElement));
         }
-    };
-    Scene.prototype.addElement = function (se) {
+    }
+    addElement(se) {
         this.sceneElements.push(se);
         if (se instanceof SENode) {
             this.nodes.push(se);
@@ -78,46 +73,42 @@ var Scene = (function () {
         else if (se instanceof SEBeam) {
             this.beams.push(se);
         }
-    };
-    Scene.prototype.clear = function () {
+    }
+    clear() {
         this.sceneElements = [];
         this.nodes = [];
         this.beams = [];
-    };
-    Scene.prototype.reset = function () {
-        for (var _i = 0, _a = this.sceneElements; _i < _a.length; _i++) {
-            var se = _a[_i];
+    }
+    reset() {
+        for (const se of this.sceneElements) {
             se.simInit();
         }
-    };
-    Scene.prototype.tick = function () {
-        for (var _i = 0, _a = this.nodes; _i < _a.length; _i++) {
-            var node = _a[_i];
+    }
+    tick() {
+        for (const node of this.nodes) {
             node.simAcceleration.y = this.gravity;
             node.simTick();
             if (node.position.y > height) {
                 node.position.y = height;
             }
         }
-        for (var _b = 0, _c = this.beams; _b < _c.length; _b++) {
-            var beam = _c[_b];
+        for (const beam of this.beams) {
             beam.simTick();
         }
-    };
-    Scene.prototype.switchSimMode = function (mode) {
+    }
+    switchSimMode(mode) {
         if (this.simMode == SimMode.STOPPED && mode == SimMode.PLAYING) {
             this.reset();
         }
         this.simMode = mode;
         simLabel.html(mode);
-    };
-    Scene.prototype.pickElement = function (vMouse) {
-        var clickRadius = 20;
-        var bestElement = null;
-        var bestDist = 10000;
-        for (var _i = 0, _a = this.beams; _i < _a.length; _i++) {
-            var beam = _a[_i];
-            var _b = beam.getClosestPoint(vMouse), beamPoint = _b[0], d = _b[1];
+    }
+    pickElement(vMouse) {
+        let clickRadius = 20;
+        let bestElement = null;
+        let bestDist = 10000;
+        for (const beam of this.beams) {
+            const [beamPoint, d] = beam.getClosestPoint(vMouse);
             if (d < clickRadius) {
                 if (bestElement == null || d < bestDist) {
                     bestElement = beam;
@@ -128,9 +119,8 @@ var Scene = (function () {
         if (bestDist < clickRadius) {
             bestDist = clickRadius;
         }
-        for (var _c = 0, _d = this.nodes; _c < _d.length; _c++) {
-            var node = _d[_c];
-            var d = vMouse.dist(node.simPosition);
+        for (const node of this.nodes) {
+            let d = vMouse.dist(node.simPosition);
             if (d < clickRadius) {
                 if (bestElement == null || d < bestDist) {
                     bestElement = node;
@@ -139,14 +129,13 @@ var Scene = (function () {
             }
         }
         return bestElement;
-    };
-    Scene.prototype.pickNode = function (vMouse) {
-        var clickRadius = 20;
-        var bestNode = null;
-        var bestDist = 10000;
-        for (var _i = 0, _a = this.nodes; _i < _a.length; _i++) {
-            var node = _a[_i];
-            var d = vMouse.dist(node.simPosition);
+    }
+    pickNode(vMouse) {
+        let clickRadius = 20;
+        let bestNode = null;
+        let bestDist = 10000;
+        for (const node of this.nodes) {
+            let d = vMouse.dist(node.simPosition);
             if (d < clickRadius) {
                 if (bestNode == null || d < bestDist) {
                     bestNode = node;
@@ -155,48 +144,57 @@ var Scene = (function () {
             }
         }
         return bestNode;
-    };
-    return Scene;
-}());
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var SceneElement = (function () {
-    function SceneElement() {
+    }
+    getDesignParts() {
+        let hashMap = new Map();
+        for (const beam of this.beams) {
+            let length = beam.restLength.toFixed(3).toString();
+            if (hashMap.has(length)) {
+                hashMap.set(length, hashMap.get(length) + 1);
+            }
+            else {
+                hashMap.set(length, 1);
+            }
+        }
+        return hashMap;
+    }
+    loadDefaultStock() {
+        this.stock = [];
+        this.stock.push(new StockPiece(500));
+        this.stock.push(new StockPiece(500));
+        this.stock.push(new StockPiece(400));
+        this.stock.push(new StockPiece(400));
+        this.stock.push(new StockPiece(300));
+        this.stock.push(new StockPiece(300));
+        this.stock.push(new StockPiece(200));
+        this.stock.push(new StockPiece(200));
+        this.stock.push(new StockPiece(100));
+        this.stock.push(new StockPiece(100));
+    }
+}
+class SceneElement {
+    constructor() {
         this.visible = true;
         this.id = -1;
         this.id = SceneElement.counter;
         SceneElement.counter += 1;
     }
-    SceneElement.prototype.equals = function (se) {
+    equals(se) {
         if (se == null) {
             return false;
         }
         return this.id == se.id;
-    };
-    SceneElement.counter = 0;
-    return SceneElement;
-}());
-var SENode = (function (_super) {
-    __extends(SENode, _super);
-    function SENode(position, support) {
-        var _this = _super.call(this) || this;
-        _this.position = position;
-        _this.simInit();
-        _this.support = support;
-        return _this;
     }
-    SENode.prototype.draw = function (isSelected) {
+}
+SceneElement.counter = 0;
+class SENode extends SceneElement {
+    constructor(position, support) {
+        super();
+        this.position = position;
+        this.simInit();
+        this.support = support;
+    }
+    draw(isSelected) {
         if (!this.visible) {
             return;
         }
@@ -215,13 +213,13 @@ var SENode = (function (_super) {
             fill(20, 20, 255);
         }
         ellipse(this.simPosition.x, this.simPosition.y, SENode.nodeSize, SENode.nodeSize);
-    };
-    SENode.prototype.simInit = function () {
+    }
+    simInit() {
         this.simPosition = this.position.copy();
         this.simVelocity = createVector(0, 0);
         this.simAcceleration = createVector(0, 0);
-    };
-    SENode.prototype.simTick = function () {
+    }
+    simTick() {
         if (this.support) {
             return;
         }
@@ -232,32 +230,29 @@ var SENode = (function (_super) {
         }
         this.simPosition.add(this.simVelocity);
         this.simAcceleration.set(0, 0);
-    };
-    SENode.prototype.simSetAcceleration = function (accel) {
-        this.simAcceleration.set(accel);
-    };
-    SENode.prototype.getDisplayName = function () {
-        return (this.support ? "Suport" : "Node");
-    };
-    SENode.simDrag = 0.99;
-    SENode.simMaxSpeed = 20;
-    SENode.nodeSize = 20;
-    return SENode;
-}(SceneElement));
-var SEBeam = (function (_super) {
-    __extends(SEBeam, _super);
-    function SEBeam(childA, childB) {
-        var _this = _super.call(this) || this;
-        _this.restLength = 100;
-        _this.strength = 0.1;
-        _this.childA = childA;
-        _this.childB = childB;
-        if (childA && childB) {
-            _this.restLength = childA.position.dist(childB.position);
-        }
-        return _this;
     }
-    SEBeam.prototype.draw = function (isSelected) {
+    simSetAcceleration(accel) {
+        this.simAcceleration.set(accel);
+    }
+    getDisplayName() {
+        return (this.support ? "Support" : "Node");
+    }
+}
+SENode.simDrag = 0.99;
+SENode.simMaxSpeed = 20;
+SENode.nodeSize = 20;
+class SEBeam extends SceneElement {
+    constructor(childA, childB) {
+        super();
+        this.restLength = 100;
+        this.strength = 0.1;
+        this.childA = childA;
+        this.childB = childB;
+        if (childA && childB) {
+            this.restLength = childA.position.dist(childB.position);
+        }
+    }
+    draw(isSelected) {
         if (!this.visible) {
             return;
         }
@@ -276,12 +271,12 @@ var SEBeam = (function (_super) {
                 line(this.childA.position.x, this.childA.position.y, this.dummyB.x, this.dummyB.y);
             }
         }
-    };
-    SEBeam.prototype.simInit = function () {
-    };
-    SEBeam.prototype.simTick = function () {
-        var childDelta = p5.Vector.sub(this.childB.simPosition, this.childA.simPosition);
-        var deltaLength = this.restLength - childDelta.mag();
+    }
+    simInit() {
+    }
+    simTick() {
+        let childDelta = p5.Vector.sub(this.childB.simPosition, this.childA.simPosition);
+        let deltaLength = this.restLength - childDelta.mag();
         if (Math.abs(deltaLength) > 1) {
             var push = this.strength * Math.sign(deltaLength);
             if (!this.childA.support && !this.childB.support) {
@@ -299,30 +294,36 @@ var SEBeam = (function (_super) {
                 this.childB.simVelocity.add(pushDelta);
             }
         }
-    };
-    SEBeam.prototype.getDisplayName = function () {
+    }
+    getDisplayName() {
         return ("Beam");
-    };
-    SEBeam.prototype.getClosestPoint = function (vec) {
-        var a = this.childA.position;
-        var b = this.childB.position;
-        var l2 = this.distSquared(a, b);
+    }
+    getClosestPoint(vec) {
+        const a = this.childA.position;
+        const b = this.childB.position;
+        const l2 = this.distSquared(a, b);
         if (l2 == 0.0)
             return ([a, vec.dist(a)]);
-        var t = Math.max(0, Math.min(1, p5.Vector.dot(p5.Vector.sub(vec, a), p5.Vector.sub(b, a)) / l2));
-        var projection = p5.Vector.add(a, p5.Vector.sub(b, a).mult(t));
+        const t = Math.max(0, Math.min(1, p5.Vector.dot(p5.Vector.sub(vec, a), p5.Vector.sub(b, a)) / l2));
+        const projection = p5.Vector.add(a, p5.Vector.sub(b, a).mult(t));
         return ([projection, projection.dist(vec)]);
-    };
-    SEBeam.prototype.distSquared = function (a, b) {
+    }
+    distSquared(a, b) {
         return (Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2) + Math.pow(a.z - b.z, 2));
-    };
-    return SEBeam;
-}(SceneElement));
-var controlDiv = null;
-var scene = null;
-var toolLabel = null;
-var simLabel = null;
-var selectedNameLabel = null;
+    }
+}
+class StockPiece {
+    constructor(size) {
+        this.size = size;
+    }
+}
+let controlDiv = null;
+let scene = null;
+let toolLabel = null;
+let simLabel = null;
+let selectedNameLabel = null;
+let designPartTypeDiv = null;
+let stockPieceDiv = null;
 var MouseMode;
 (function (MouseMode) {
     MouseMode[MouseMode["EMPTY"] = 0] = "EMPTY";
@@ -331,11 +332,11 @@ var MouseMode;
     MouseMode[MouseMode["PLACE_BEAM_A"] = 3] = "PLACE_BEAM_A";
     MouseMode[MouseMode["PLACE_BEAM_B"] = 4] = "PLACE_BEAM_B";
 })(MouseMode || (MouseMode = {}));
-var currentMode = MouseMode.EMPTY;
-var dummySupport;
-var dummyNode;
-var dummyBeam;
-var mouseOverControl = false;
+let currentMode = MouseMode.EMPTY;
+let dummySupport;
+let dummyNode;
+let dummyBeam;
+let mouseOverControl = false;
 function setup() {
     console.log("🚀 - Setup initialized - P5 is running");
     createCanvas(windowWidth, windowHeight);
@@ -353,11 +354,14 @@ function setup() {
     toolLabel = select("#toolLabel");
     simLabel = select("#simLabel");
     selectedNameLabel = select("#selectedNameLabel");
+    designPartTypeDiv = select("#matchingList");
+    stockPieceDiv = select("#stockList");
     dummySupport = new SENode(createVector(-100, -100), true);
     dummySupport.visible = false;
     dummyNode = new SENode(createVector(-100, -100), false);
     dummyNode.visible = false;
     dummyBeam = new SEBeam(null, null);
+    uiUpdateStockPieces();
     setupControl();
 }
 function windowResized() {
@@ -404,7 +408,15 @@ function setSelectedElement(se) {
         selectedNameLabel.html("");
     }
     else {
-        selectedNameLabel.html(se.getDisplayName() + " " + se.id);
+        let contentString = se.getDisplayName() + " " + se.id + "<br>";
+        if (se instanceof SENode) {
+            contentString += "Position : " + se.position.x + "," + se.position.y + "," + se.position.z;
+        }
+        else if (se instanceof SEBeam) {
+            let restLength = int(se.restLength * 1000) / 1000.0;
+            contentString += "Length : " + restLength;
+        }
+        selectedNameLabel.html(contentString);
     }
 }
 function switchMode(mode) {
@@ -495,33 +507,52 @@ function mousePressed() {
             break;
     }
 }
+function uiUpdateDesignParts() {
+    let hashMap = scene.getDesignParts();
+    let contentString = "<table><tr><th>Length</th><th></th><th>Count</th></tr>";
+    for (const [key, value] of hashMap) {
+        contentString += "<tr><td>" + key + "</td><td>&nbsp:&nbsp</td><td>" + value + "</td></tr>";
+    }
+    contentString += "</table>";
+    designPartTypeDiv.html(contentString);
+}
+function uiUpdateStockPieces() {
+    let contentString = "<table><tr><th>Id</th><th></th><th>Length</th></tr>";
+    let counter = 0;
+    for (const sp of scene.stock) {
+        contentString += "<tr><td>" + counter + "</td><td>&nbsp:&nbsp</td><td>" + sp.size + "</td></tr>";
+        counter += 1;
+    }
+    contentString += "</table>";
+    stockPieceDiv.html(contentString);
+}
 function setupControl() {
-    var buttonSupport = select("#buttonCreateSupport");
+    let buttonSupport = select("#buttonCreateSupport");
     buttonSupport.mousePressed(function () {
         switchMode(MouseMode.PLACE_SUPPORT);
     });
-    var buttonNode = select("#buttonCreateNode");
+    let buttonNode = select("#buttonCreateNode");
     buttonNode.mousePressed(function () {
         switchMode(MouseMode.PLACE_NODE);
     });
-    var buttonBeam = select("#buttonCreateBeam");
+    let buttonBeam = select("#buttonCreateBeam");
     buttonBeam.mousePressed(function () {
         switchMode(MouseMode.PLACE_BEAM_A);
     });
-    var buttonPlay = select("#buttonPlay");
+    let buttonPlay = select("#buttonPlay");
     buttonPlay.mousePressed(function () {
         scene.switchSimMode(SimMode.PLAYING);
     });
-    var buttonPause = select("#buttonPause");
+    let buttonPause = select("#buttonPause");
     buttonPause.mousePressed(function () {
         scene.switchSimMode(SimMode.PAUSED);
     });
-    var buttonReset = select("#buttonReset");
+    let buttonReset = select("#buttonReset");
     buttonReset.mousePressed(function () {
         scene.switchSimMode(SimMode.STOPPED);
         scene.reset();
     });
-    var buttonDemo = select("#buttonLoadDemo");
+    let buttonDemo = select("#buttonLoadDemo");
     buttonDemo.mousePressed(function () {
         scene.clear();
         scene.addElement(new SENode(createVector(600, 600), true));
@@ -540,6 +571,7 @@ function setupControl() {
         scene.addElement(new SEBeam(scene.nodes[1], scene.nodes[2]));
         scene.addElement(new SEBeam(scene.nodes[2], scene.nodes[5]));
         scene.addElement(new SEBeam(scene.nodes[3], scene.nodes[4]));
+        uiUpdateDesignParts();
     });
 }
 //# sourceMappingURL=build.js.map

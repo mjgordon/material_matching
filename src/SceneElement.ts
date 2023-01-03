@@ -95,7 +95,7 @@ class SENode extends SceneElement {
     }
 
     getDisplayName(): string {
-        return(this.support ? "Suport" : "Node");
+        return(this.support ? "Support" : "Node");
     }
 }
 
@@ -105,7 +105,11 @@ class SEBeam extends SceneElement {
 
     dummyB:p5.Vector;
 
+    /**
+     * Default length of the beam
+     */
     restLength:number = 100;
+    
     strength:number = 0.1;
 
     constructor(childA:SENode, childB:SENode) {

@@ -9,6 +9,8 @@ class Scene{
     nodes: SENode[] = [];
     beams: SEBeam[] = [];
 
+    stock: StockPiece[] = [];
+
     selectedElement:SceneElement = null;
 
     gravity:number = 0.02;
@@ -17,6 +19,10 @@ class Scene{
     sceneHeight: number = 600;
 
     simMode:SimMode = SimMode.STOPPED;
+
+    constructor() {
+        this.loadDefaultStock();
+    }
 
     draw() {
         for (const se of this.beams) {
@@ -38,18 +44,30 @@ class Scene{
         }
     }
 
+
+    /**
+     * Deletes all design elements in the scene
+     */
     clear() {
         this.sceneElements = [];
         this.nodes = [];
         this.beams = [];
     }
 
+
+    /**
+     * Resets the physics simulation of the scene
+     */
     reset() {
         for (const se of this.sceneElements) {
             se.simInit();
         }
     }
 
+
+    /**
+     * Advances the physics simulation
+     */
     tick() {
         for (const node of this.nodes) {
             node.simAcceleration.y = this.gravity;
@@ -123,5 +141,46 @@ class Scene{
         
 
         return bestNode
+    }
+
+
+    /**
+     * Returns a map describing the number of each design part type
+     */
+    getDesignParts():Map<string,number> {
+        let hashMap:Map<string, number> = new Map<string,number>();
+
+        for (const beam of this.beams) {
+
+            let length:string = beam.restLength.toFixed(3).toString();
+
+            if (hashMap.has(length)) {
+                hashMap.set(length,hashMap.get(length) + 1);
+            }
+            else {
+                hashMap.set(length,1);
+            }
+        }
+
+        return hashMap;
+    }
+
+
+    /**
+     * Sets the stock to demo/testing values
+     */
+    loadDefaultStock() {
+        this.stock = [];
+
+        this.stock.push(new StockPiece(500));
+        this.stock.push(new StockPiece(500));
+        this.stock.push(new StockPiece(400));
+        this.stock.push(new StockPiece(400));
+        this.stock.push(new StockPiece(300));
+        this.stock.push(new StockPiece(300));
+        this.stock.push(new StockPiece(200));
+        this.stock.push(new StockPiece(200));
+        this.stock.push(new StockPiece(100));
+        this.stock.push(new StockPiece(100));
     }
 }
