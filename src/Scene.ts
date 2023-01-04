@@ -181,6 +181,13 @@ export class Scene{
         return hashMap;
     }
 
+    /**
+     * Return the lengths of the current stock pieces as an array of numbers
+     */
+    getStockLengths():number[] {
+        return this.stock.map(s => (s.size));
+    }
+
 
     /**
      * Sets the stock to demo/testing values

@@ -7,7 +7,7 @@ import {connectToDispatcher, requestSolve} from "./socketio";
 export let p:p5 = null;
 
 let controlDiv: p5.Element = null;
-let scene:Scene = null;
+export let scene:Scene = null;
 
 let toolLabel: p5.Element = null;
 export let simLabel: p5.Element = null;

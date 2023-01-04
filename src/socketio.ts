@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { scene } from "./sketch";
 
 let socket:Socket<ServerToClientEvents, ClientToServerEvents> = null;
 
@@ -31,9 +32,13 @@ export function connectToDispatcher():void {
 export function requestSolve():void {
     const map:Record<string, any> = {};
     map.method = "waste";
-    map.stock_lengths = [10, 5, 4];
-    map.part_lengths = [3,2];
-    map.part_requests = [3,3];
+    map.stock_lengths = scene.getStockLengths();
+
+    const designMap:Map<string,number> = scene.getDesignParts();
+
+
+    map.part_lengths = Array.from(designMap.keys()).map(k => parseFloat(k));
+    map.part_requests = Array.from(designMap.values());
     
     socket.emit("solve_request",JSON.stringify(map));
 }
