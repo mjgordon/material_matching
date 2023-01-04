@@ -1,10 +1,16 @@
-enum SimMode {
+import {p,simLabel} from "./sketch";
+import {SceneElement, SENode, SEBeam} from "./SceneElement";
+import { Vector } from "p5";
+import { StockPiece } from "./StockPiece";
+
+
+export enum SimMode {
     STOPPED = "Stopped",
     PLAYING = "Playing",
     PAUSED = "Paused"
 }
 
-class Scene{
+export class Scene{
     sceneElements: SceneElement[] = [];
     nodes: SENode[] = [];
     beams: SEBeam[] = [];
@@ -73,8 +79,8 @@ class Scene{
             node.simAcceleration.y = this.gravity;
             node.simTick();
 
-            if (node.position.y > height) {
-                node.position.y = height;
+            if (node.position.y > p.height) {
+                node.position.y = p.height;
             }
         }
 
@@ -92,7 +98,7 @@ class Scene{
     }
 
 
-    pickElement(vMouse:p5.Vector):SceneElement {
+    pickElement(vMouse:Vector):SceneElement {
         let clickRadius:number = 20;
         let bestElement:SceneElement = null;
         let bestDist:number = 10000;
@@ -124,7 +130,7 @@ class Scene{
         return bestElement;
     }
 
-    pickNode(vMouse:p5.Vector):SENode {
+    pickNode(vMouse:Vector):SENode {
         let clickRadius:number = 20;
         let bestNode:SENode = null;
         let bestDist:number = 10000;

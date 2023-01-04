@@ -1,4 +1,7 @@
-abstract class SceneElement {
+import {p} from "./sketch";
+import {Vector} from "p5";
+
+export abstract class SceneElement {
     static counter:number = 0;
 
     visible:boolean = true;
@@ -25,7 +28,7 @@ abstract class SceneElement {
 }
 
 
-class SENode extends SceneElement {
+export class SENode extends SceneElement {
     support:boolean;
 
     static simDrag = 0.99;
@@ -33,13 +36,13 @@ class SENode extends SceneElement {
 
     static nodeSize:number = 20;
     
-    position: p5.Vector;
+    position: Vector;
 
-    simPosition: p5.Vector;
-    simVelocity: p5.Vector;
-    simAcceleration: p5.Vector;
+    simPosition: Vector;
+    simVelocity: Vector;
+    simAcceleration: Vector;
 
-    constructor(position: p5.Vector, support:boolean) {
+    constructor(position: Vector, support:boolean) {
         super();
         this.position = position;
         this.simInit();
@@ -52,29 +55,29 @@ class SENode extends SceneElement {
         }
 
         if (isSelected) {
-            stroke(255);
-            strokeWeight(2);
+            p.stroke(255);
+            p.strokeWeight(2);
         }
         else {
-            stroke(0);
-            strokeWeight(1);
+            p.stroke(0);
+            p.strokeWeight(1);
         }
         
         
         if (this.support) {
-            fill(64);
+            p.fill(64);
         }
         else {
-            fill(20,20,255);
+            p.fill(20,20,255);
         }
         
-        ellipse(this.simPosition.x, this.simPosition.y, SENode.nodeSize,SENode.nodeSize);
+        p.ellipse(this.simPosition.x, this.simPosition.y, SENode.nodeSize,SENode.nodeSize);
     }
 
     simInit():void {
         this.simPosition = this.position.copy();
-        this.simVelocity = createVector(0,0);
-        this.simAcceleration = createVector(0,0);
+        this.simVelocity = p.createVector(0,0);
+        this.simAcceleration = p.createVector(0,0);
     }
 
     simTick():void {
@@ -90,7 +93,7 @@ class SENode extends SceneElement {
         this.simAcceleration.set(0,0);
     }
 
-    simSetAcceleration(accel:p5.Vector):void {
+    simSetAcceleration(accel:Vector):void {
         this.simAcceleration.set(accel);
     }
 
@@ -99,17 +102,17 @@ class SENode extends SceneElement {
     }
 }
 
-class SEBeam extends SceneElement {
+export class SEBeam extends SceneElement {
     childA:SENode;
     childB:SENode;
 
-    dummyB:p5.Vector;
+    dummyB:Vector;
 
     /**
      * Default length of the beam
      */
     restLength:number = 100;
-    
+
     strength:number = 0.1;
 
     constructor(childA:SENode, childB:SENode) {
@@ -129,17 +132,17 @@ class SEBeam extends SceneElement {
 
         if (this.childA) {
             if (isSelected) {
-                stroke(255);
+                p.stroke(255);
             }
             else {
-                stroke(0);
+                p.stroke(0);
             }
-            strokeWeight(3);
+            p.strokeWeight(3);
             if (this.childB) {
-                line(this.childA.simPosition.x,this.childA.simPosition.y, this.childB.simPosition.x,this.childB.simPosition.y);
+                p.line(this.childA.simPosition.x,this.childA.simPosition.y, this.childB.simPosition.x,this.childB.simPosition.y);
             }
             else {
-                line(this.childA.position.x,this.childA.position.y, this.dummyB.x,this.dummyB.y);
+                p.line(this.childA.position.x,this.childA.position.y, this.dummyB.x,this.dummyB.y);
             }
         }
     }
@@ -149,7 +152,7 @@ class SEBeam extends SceneElement {
     }
 
     simTick():void {
-        let childDelta:p5.Vector = p5.Vector.sub(this.childB.simPosition, this.childA.simPosition);
+        let childDelta:Vector = Vector.sub(this.childB.simPosition, this.childA.simPosition);
         let deltaLength:number = this.restLength - childDelta.mag();
 
         if (Math.abs(deltaLength) > 1) {
@@ -177,13 +180,13 @@ class SEBeam extends SceneElement {
         return("Beam");
     }
 
-    getClosestPoint(vec:p5.Vector):[p5.Vector,number] {
-        const a:p5.Vector = this.childA.position;
-        const b:p5.Vector = this.childB.position;
+    getClosestPoint(vec:Vector):[Vector,number] {
+        const a:Vector = this.childA.position;
+        const b:Vector = this.childB.position;
         const l2:number = this.distSquared(a,b);
         if (l2 == 0.0) return([a, vec.dist(a)]);
-        const t:number = Math.max(0, Math.min(1, p5.Vector.dot(p5.Vector.sub(vec,a), p5.Vector.sub(b,a)) / l2));
-        const projection:p5.Vector = p5.Vector.add(a, p5.Vector.sub(b, a).mult(t));
+        const t:number = Math.max(0, Math.min(1, Vector.dot(Vector.sub(vec,a), Vector.sub(b,a)) / l2));
+        const projection:Vector = Vector.add(a, Vector.sub(b, a).mult(t));
         return( [ projection, projection.dist(vec)]);
     }
 
@@ -194,7 +197,7 @@ class SEBeam extends SceneElement {
      * @param b 
      * @returns 
      */
-    distSquared(a:p5.Vector, b: p5.Vector) {
+    distSquared(a:Vector, b: Vector) {
         return (Math.pow(a.x - b.x,2) + Math.pow(a.y - b.y,2) + Math.pow(a.z - b.z,2));
     }
 }

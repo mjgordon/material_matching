@@ -1,15 +1,21 @@
-import { requestSolve } from "./socketio";
+import {requestSolve} from "./socketio";
+import {Scene, SimMode} from "./Scene";
+import {SceneElement, SENode, SEBeam} from "./SceneElement";
+import * as p5 from "p5";
+
+export let p:p5 = null;
 
 let controlDiv: p5.Element = null;
 let scene:Scene = null;
 
 let toolLabel: p5.Element = null;
-let simLabel: p5.Element = null;
+export let simLabel: p5.Element = null;
 
 let selectedNameLabel: p5.Element = null;
 
 let designPartTypeDiv: p5.Element = null;
 let stockPieceDiv: p5.Element = null;
+
 
 enum MouseMode {
   EMPTY,
@@ -21,7 +27,7 @@ enum MouseMode {
 
 let currentMode: MouseMode = MouseMode.EMPTY;
 
-
+console.log("sup");
 
 let dummySupport: SENode;
 let dummyNode: SENode;
@@ -29,36 +35,62 @@ let dummyBeam: SEBeam;
 
 let mouseOverControl:boolean = false;
 
+var sketch = (_p: p5) => {
+  p = _p;
+  _p.setup = () => {
+    setup();
+  };
+
+  _p.draw = () => {
+    draw();
+  };
+
+  _p.windowResized = () => {
+    windowResized();
+  };
+
+  _p.mousePressed = () => {
+    mousePressed();
+  };
+
+  _p.keyPressed = () => {
+    keyPressed();
+  }
+
+};
+
+new p5(sketch);
+
 
 function setup() {
   console.log("🚀 - Setup initialized - P5 is running");
-  createCanvas(windowWidth, windowHeight)
-  rectMode(CENTER).noFill().frameRate(30);
+  p.createCanvas(p.windowWidth, p.windowHeight)
+  p.rectMode(p.CENTER).noFill().frameRate(30);
 
   scene = new Scene();
 
-  controlDiv = select("#controlDiv");
+  controlDiv = p.select("#controlDiv");
   controlDiv.mouseOver(function() {
     mouseOverControl = true;
-    noCursor();
+    p.noCursor();
   });
   controlDiv.mouseOut(function() {
     mouseOverControl = false;
-    cursor(ARROW);
+    p.cursor(p.ARROW);
   });
 
-  toolLabel = select("#toolLabel");
-  simLabel = select("#simLabel");
+  toolLabel = p.select("#toolLabel");
+  simLabel = p.select("#simLabel");
 
-  selectedNameLabel = select("#selectedNameLabel");
+  selectedNameLabel = p.select("#selectedNameLabel");
 
-  designPartTypeDiv = select("#matchingList");
-  stockPieceDiv = select("#stockList");
+  designPartTypeDiv = p.select("#matchingList");
+  stockPieceDiv = p.select("#stockList");
 
-  dummySupport = new SENode(createVector(-100,-100),true);
+  dummySupport = new SENode(p.createVector(-100,-100),true);
   dummySupport.visible = false;
 
-  dummyNode = new SENode(createVector(-100,-100),false);
+  dummyNode = new SENode(p.createVector(-100,-100),false);
   dummyNode.visible = false;
 
   dummyBeam = new SEBeam(null,null);
@@ -70,42 +102,42 @@ function setup() {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  p.resizeCanvas(p.windowWidth, p.windowHeight);
 }
 
 
 function draw() {
-  background(127);
+  p.background(127);
   
-  stroke(255);
-  strokeWeight(0.5);
-  for (var x = 0; x < width; x+= 100) {
-    line(x,0,x,height);
+  p.stroke(255);
+  p.strokeWeight(0.5);
+  for (var x = 0; x < p.width; x+= 100) {
+    p.line(x,0,x,p.height);
   }
-  for (var y = 0; y < height; y+= 100) {
-    line(0,y,width,y);
+  for (var y = 0; y < p.height; y+= 100) {
+    p.line(0,y,p.width,y);
   }
 
   switch(currentMode) {
     case MouseMode.PLACE_SUPPORT:
-      dummySupport.position.x = mouseX;
-      dummySupport.position.y = mouseY;
+      dummySupport.position.x = p.mouseX;
+      dummySupport.position.y = p.mouseY;
 
-      dummySupport.simPosition.x = mouseX;
-      dummySupport.simPosition.y = mouseY;
+      dummySupport.simPosition.x = p.mouseX;
+      dummySupport.simPosition.y = p.mouseY;
       dummySupport.draw(false);
     break;
 
     case MouseMode.PLACE_NODE:
-      dummyNode.position.x = mouseX;
-      dummyNode.position.y = mouseY;
-      dummyNode.simPosition.x = mouseX;
-      dummyNode.simPosition.y = mouseY;
+      dummyNode.position.x = p.mouseX;
+      dummyNode.position.y = p.mouseY;
+      dummyNode.simPosition.x = p.mouseX;
+      dummyNode.simPosition.y = p.mouseY;
       dummyNode.draw(false);
     break;
 
     case MouseMode.PLACE_BEAM_B:
-      dummyBeam.dummyB = createVector(mouseX, mouseY);
+      dummyBeam.dummyB = p.createVector(p.mouseX, p.mouseY);
       dummyBeam.draw(false);
     break;
   }
@@ -133,7 +165,7 @@ function setSelectedElement(se:SceneElement):void {
       contentString += "Position : " + se.position.x + "," + se.position.y + "," + se.position.z;
     }
     else if (se instanceof SEBeam) {
-      let restLength = int(se.restLength * 1000) / 1000.0;
+      let restLength = p.int(se.restLength * 1000) / 1000.0;
       contentString += "Length : " + restLength;
     }
     selectedNameLabel.html( contentString);
@@ -177,12 +209,12 @@ function switchMode(mode: MouseMode) {
 
 
 function keyPressed() {
-  if (keyCode == ESCAPE) {
+  if (p.keyCode == p.ESCAPE) {
     switchMode(MouseMode.EMPTY);
   }
   
 
-  switch(key) {
+  switch(p.key) {
     case 's':
       switchMode(MouseMode.PLACE_SUPPORT);
     break;
@@ -218,20 +250,20 @@ function mousePressed():void {
 
   switch(currentMode) {
     case MouseMode.EMPTY:
-      var elementPick:SceneElement = scene.pickElement(createVector(mouseX,mouseY));
+      var elementPick:SceneElement = scene.pickElement(p.createVector(p.mouseX,p.mouseY));
       setSelectedElement(elementPick);
     break;
 
     case MouseMode.PLACE_SUPPORT:
-      scene.addElement(new SENode(createVector(mouseX, mouseY),true));
+      scene.addElement(new SENode(p.createVector(p.mouseX, p.mouseY),true));
     break;
 
     case MouseMode.PLACE_NODE:
-      scene.addElement(new SENode(createVector(mouseX, mouseY),false));
+      scene.addElement(new SENode(p.createVector(p.mouseX, p.mouseY),false));
     break;
 
     case MouseMode.PLACE_BEAM_A:
-      var nodePick:SENode = scene.pickNode(createVector(mouseX,mouseY));
+      var nodePick:SENode = scene.pickNode(p.createVector(p.mouseX,p.mouseY));
       if (nodePick) {
         dummyBeam.childA = nodePick;
         switchMode(MouseMode.PLACE_BEAM_B);
@@ -239,7 +271,7 @@ function mousePressed():void {
     break;
 
     case MouseMode.PLACE_BEAM_B:
-      var nodePick:SENode = scene.pickNode(createVector(mouseX,mouseY));
+      var nodePick:SENode = scene.pickNode(p.createVector(p.mouseX,p.mouseY));
       if (nodePick) {
         dummyBeam.childB = nodePick;
         dummyBeam.restLength = dummyBeam.childA.position.dist(dummyBeam.childB.position);
@@ -290,47 +322,47 @@ function uiUpdateStockPieces() {
  * Attach functionality to HTML Objects
  */
 function setupControl() {
-  let buttonSupport = select("#buttonCreateSupport");
+  let buttonSupport = p.select("#buttonCreateSupport");
   buttonSupport.mousePressed(function() {
     switchMode(MouseMode.PLACE_SUPPORT);
   });
 
-  let buttonNode = select("#buttonCreateNode");
+  let buttonNode = p.select("#buttonCreateNode");
   buttonNode.mousePressed(function() {
     switchMode(MouseMode.PLACE_NODE);
   });
 
-  let buttonBeam = select("#buttonCreateBeam");
+  let buttonBeam = p.select("#buttonCreateBeam");
   buttonBeam.mousePressed(function() {
     switchMode(MouseMode.PLACE_BEAM_A);
   });
 
-  let buttonPlay = select("#buttonPlay");
+  let buttonPlay = p.select("#buttonPlay");
   buttonPlay.mousePressed(function() {
     scene.switchSimMode(SimMode.PLAYING);
   });
 
-  let buttonPause = select("#buttonPause");
+  let buttonPause = p.select("#buttonPause");
   buttonPause.mousePressed(function() {
     scene.switchSimMode(SimMode.PAUSED);
   });
 
-  let buttonReset = select("#buttonReset");
+  let buttonReset = p.select("#buttonReset");
   buttonReset.mousePressed(function() {
     scene.switchSimMode(SimMode.STOPPED);
     scene.reset();
   });
 
-  let buttonDemo = select("#buttonLoadDemo");
+  let buttonDemo = p.select("#buttonLoadDemo");
   buttonDemo.mousePressed(function() {
     scene.clear();
-    scene.addElement(new SENode(createVector(600,600),true));  // 0
-    scene.addElement(new SENode(createVector(800,600),true));  // 1
+    scene.addElement(new SENode(p.createVector(600,600),true));  // 0
+    scene.addElement(new SENode(p.createVector(800,600),true));  // 1
 
-    scene.addElement(new SENode(createVector(600,500),false)); // 2
-    scene.addElement(new SENode(createVector(800,500),false)); // 3
-    scene.addElement(new SENode(createVector(600,400),false)); // 4
-    scene.addElement(new SENode(createVector(800,400),false)); // 5
+    scene.addElement(new SENode(p.createVector(600,500),false)); // 2
+    scene.addElement(new SENode(p.createVector(800,500),false)); // 3
+    scene.addElement(new SENode(p.createVector(600,400),false)); // 4
+    scene.addElement(new SENode(p.createVector(800,400),false)); // 5
 
     scene.addElement(new SEBeam(scene.nodes[0],scene.nodes[2]));
     scene.addElement(new SEBeam(scene.nodes[1],scene.nodes[3]));
@@ -349,7 +381,7 @@ function setupControl() {
   });
 
 
-  let buttonSolveRequest = select("#buttonSolve");
+  let buttonSolveRequest = p.select("#buttonSolve");
   buttonSolveRequest.mousePressed(function() {
     requestSolve();
   });

@@ -1,4 +1,4 @@
-class StockPiece {
+export class StockPiece {
     size:number;
 
     constructor(size:number) {
