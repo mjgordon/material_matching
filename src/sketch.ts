@@ -1,7 +1,8 @@
-import {requestSolve} from "./socketio";
+import * as p5 from "p5";
+
 import {Scene, SimMode} from "./Scene";
 import {SceneElement, SENode, SEBeam} from "./SceneElement";
-import * as p5 from "p5";
+import {connectToDispatcher, requestSolve} from "./socketio";
 
 export let p:p5 = null;
 
@@ -26,8 +27,6 @@ enum MouseMode {
 }
 
 let currentMode: MouseMode = MouseMode.EMPTY;
-
-console.log("sup");
 
 let dummySupport: SENode;
 let dummyNode: SENode;
@@ -97,8 +96,9 @@ function setup() {
 
   uiUpdateStockPieces();
 
-
   setupControl();
+
+  connectToDispatcher();
 }
 
 function windowResized() {
