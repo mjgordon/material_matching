@@ -378,6 +378,8 @@ function setupControl() {
     scene.addElement(new SEBeam(scene.nodes[3],scene.nodes[4]));
 
     uiUpdateDesignParts();
+
+    scene.switchSimMode(SimMode.STOPPED);
   });
 
 
