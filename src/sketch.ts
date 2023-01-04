@@ -1,3 +1,5 @@
+import { requestSolve } from "./socketio";
+
 let controlDiv: p5.Element = null;
 let scene:Scene = null;
 
@@ -345,6 +347,13 @@ function setupControl() {
 
     uiUpdateDesignParts();
   });
+
+
+  let buttonSolveRequest = select("#buttonSolve");
+  buttonSolveRequest.mousePressed(function() {
+    requestSolve();
+  });
+
 }
 
 
