@@ -1,3 +1,4 @@
+import {p} from "./sketch";
 import { io, Socket } from "socket.io-client";
 import { scene } from "./sketch";
 
@@ -7,7 +8,7 @@ interface ServerToClientEvents {
     noArg: () => void;
     basicEmit: (a: number, b: string, c: Buffer) => void;
     withAck: (d: string, callback: (e: number) => void) => void;
-    solve_response: (json:JSON) => void;
+    solve_response: (json:object) => void;
 }
 
 
@@ -22,7 +23,7 @@ export function connectToDispatcher():void {
     socket = io("http://127.0.0.1:5000");
 
     socket.on("solve_response", (json:JSON) => {
-        console.log(json);
+        solveResponse(json);
     });
 
     socket.emit("client_id",JSON.stringify({type: "user"}));
@@ -42,5 +43,18 @@ export function requestSolve():void {
     
     socket.emit("solve_request",JSON.stringify(map));
 }
+
+function solveResponse(json:JSON) {
+    //TODO: Weird hacky workaround
+    let obj:SolveResponseData = JSON.parse(JSON.stringify(json))
+    p.print(obj.requester_sid);
+    p.print(obj.usage[2])
+}
+
+interface SolveResponseData {
+    requester_sid:string;
+    usage:number[];
+}
+
 
 

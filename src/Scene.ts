@@ -26,6 +26,8 @@ export class Scene{
 
     simMode:SimMode = SimMode.STOPPED;
 
+    currentSolution:number[] = null;
+
     constructor() {
         this.loadDefaultStock();
     }

@@ -8,6 +8,7 @@
     "rootDir": "src",
     "sourceMap": true,
     "target": "ES6",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "experimentalDecorators": true
   }
 }
