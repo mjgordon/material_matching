@@ -149,8 +149,12 @@ export class SEBeam extends SceneElement {
                 p.line(this.childA.position.x,this.childA.position.y, this.dummyB.x,this.dummyB.y);
             }
 
-            p.strokeWeight(2);
-            p.stroke(scene.designPartsArray[this.designPartId].color);
+            if (this.designPartId != null) {
+                p.strokeWeight(2);
+                p.stroke(scene.designPartsArray[this.designPartId].color);
+            }
+            
+            
             
             if (this.childB) {
                 p.line(this.childA.simPosition.x,this.childA.simPosition.y, this.childB.simPosition.x,this.childB.simPosition.y);

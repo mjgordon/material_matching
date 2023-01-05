@@ -277,6 +277,7 @@ function mousePressed():void {
         dummyBeam.restLength = dummyBeam.childA.position.dist(dummyBeam.childB.position);
         scene.addElement(dummyBeam);
         switchMode(MouseMode.PLACE_BEAM_A);
+        uiUpdateDesignParts();
       }
     break;
   }
