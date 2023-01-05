@@ -31,24 +31,21 @@ export function connectToDispatcher():void {
 
 
 export function requestSolve():void {
-    const map:Record<string, any> = {};
-    map.method = "waste";
-    map.stock_lengths = scene.getStockLengths();
+    const jsonMap:Record<string, any> = {};
+    jsonMap.method = "waste";
+    jsonMap.stock_lengths = scene.getStockLengths();
 
-    const designMap:Map<string,number> = scene.getDesignParts();
+    jsonMap.part_lengths = scene.designPartsArray.map(dp => dp.length);
+    jsonMap.part_requests = scene.designPartsArray.map(dp => dp.count);
 
-
-    map.part_lengths = Array.from(designMap.keys()).map(k => parseFloat(k));
-    map.part_requests = Array.from(designMap.values());
-    
-    socket.emit("solve_request",JSON.stringify(map));
+    socket.emit("solve_request",JSON.stringify(jsonMap));
 }
 
 function solveResponse(json:JSON) {
     //TODO: Weird hacky workaround
     let obj:SolveResponseData = JSON.parse(JSON.stringify(json))
     p.print(obj.requester_sid);
-    p.print(obj.usage[2])
+    p.print(obj.usage)
 }
 
 interface SolveResponseData {

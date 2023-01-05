@@ -1,5 +1,7 @@
-import {p} from "./sketch";
 import {Vector} from "p5";
+
+import {p} from "./sketch";
+import {Scene} from "./scene";
 
 export abstract class SceneElement {
     static counter:number = 0;
@@ -19,7 +21,7 @@ export abstract class SceneElement {
         return this.id == se.id;
     }
 
-    abstract draw(isSelected:boolean): void;
+    abstract draw(isSelected:boolean, scene:Scene): void;
     abstract simInit():void;
     abstract simTick():void;
     abstract getDisplayName():string;
@@ -49,7 +51,7 @@ export class SENode extends SceneElement {
         this.support = support;
     }
 
-    draw(isSelected:boolean): void {
+    draw(isSelected:boolean, scene:Scene): void {
         if (!this.visible) {
             return;
         }
@@ -108,6 +110,8 @@ export class SEBeam extends SceneElement {
 
     dummyB:Vector;
 
+    designPartId:number;
+
     /**
      * Default length of the beam
      */
@@ -125,19 +129,29 @@ export class SEBeam extends SceneElement {
         }
     }
 
-    draw(isSelected:boolean): void {
+    draw(isSelected:boolean, scene:Scene): void {
         if (!this.visible) {
             return;
         }
 
         if (this.childA) {
+            p.strokeWeight(4);
             if (isSelected) {
                 p.stroke(255);
             }
             else {
                 p.stroke(0);
             }
-            p.strokeWeight(3);
+            if (this.childB) {
+                p.line(this.childA.simPosition.x,this.childA.simPosition.y, this.childB.simPosition.x,this.childB.simPosition.y);
+            }
+            else {
+                p.line(this.childA.position.x,this.childA.position.y, this.dummyB.x,this.dummyB.y);
+            }
+
+            p.strokeWeight(2);
+            p.stroke(scene.designPartsArray[this.designPartId].color);
+            
             if (this.childB) {
                 p.line(this.childA.simPosition.x,this.childA.simPosition.y, this.childB.simPosition.x,this.childB.simPosition.y);
             }

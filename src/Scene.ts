@@ -1,7 +1,9 @@
 import {p,simLabel} from "./sketch";
 import {SceneElement, SENode, SEBeam} from "./SceneElement";
-import { Vector } from "p5";
+import { Vector, Color } from "p5";
 import { StockPiece } from "./StockPiece";
+import { debugPort } from "process";
+
 
 
 export enum SimMode {
@@ -16,6 +18,8 @@ export class Scene{
     beams: SEBeam[] = [];
 
     stock: StockPiece[] = [];
+
+    designPartsArray:DesignPart[];
 
     selectedElement:SceneElement = null;
 
@@ -34,10 +38,10 @@ export class Scene{
 
     draw() {
         for (const se of this.beams) {
-            se.draw(se.equals(this.selectedElement));
+            se.draw(se.equals(this.selectedElement), this);
         }
         for (const se of this.nodes) {
-            se.draw(se.equals(this.selectedElement));
+            se.draw(se.equals(this.selectedElement), this);
         }
 
         let startX = 100;
@@ -163,25 +167,41 @@ export class Scene{
 
 
     /**
-     * Returns a map describing the number of each design part type
+     * Update part design mapping
      */
-    getDesignParts():Map<string,number> {
-        let hashMap:Map<string, number> = new Map<string,number>();
+    updateDesignParts() {
+        p.colorMode(p.HSB,1.0);
+        let designParts:Map<string,DesignPart> = new Map<string,DesignPart>();
+        this.designPartsArray = [];
+
+        let partTypeCounter:number = 0;
 
         for (const beam of this.beams) {
 
-            let length:string = beam.restLength.toFixed(3).toString();
+            let lengthString:string = beam.restLength.toFixed(3).toString();
 
-            if (hashMap.has(length)) {
-                hashMap.set(length,hashMap.get(length) + 1);
+            let dp:DesignPart;
+
+            if (!designParts.has(lengthString)) {
+                dp = new DesignPart(partTypeCounter, lengthString, beam.restLength);
+                designParts.set(lengthString,dp);
+                this.designPartsArray.push(dp);
+                partTypeCounter += 1;
+                
             }
             else {
-                hashMap.set(length,1);
+                dp = designParts.get(lengthString);
             }
+            dp.count += 1;
+            beam.designPartId = dp.typeId;
         }
 
-        return hashMap;
+        for (var i = 0; i < this.designPartsArray.length; i++) {
+            this.designPartsArray[i].color = p.color(1.0 * i / this.designPartsArray.length, 1,1);
+        }
+        p.colorMode(p.RGB,255);
     }
+
 
     /**
      * Return the lengths of the current stock pieces as an array of numbers
@@ -208,4 +228,19 @@ export class Scene{
         this.stock.push(new StockPiece(100));
         this.stock.push(new StockPiece(100));
     }
+}
+
+export class DesignPart {
+    count:number = 0;
+    length:number;
+    lengthRep: string;
+    color:Color;
+    typeId:number;
+
+    constructor(typeId:number, lengthRep:string, length:number) {
+        this.typeId = typeId;
+        this.lengthRep = lengthRep;
+        this.length = length;
+    }
+
 }

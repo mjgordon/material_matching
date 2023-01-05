@@ -1,6 +1,6 @@
 import * as p5 from "p5";
 
-import {Scene, SimMode} from "./Scene";
+import {DesignPart, Scene, SimMode} from "./Scene";
 import {SceneElement, SENode, SEBeam} from "./SceneElement";
 import {connectToDispatcher, requestSolve} from "./socketio";
 
@@ -125,7 +125,7 @@ function draw() {
 
       dummySupport.simPosition.x = p.mouseX;
       dummySupport.simPosition.y = p.mouseY;
-      dummySupport.draw(false);
+      dummySupport.draw(false, scene);
     break;
 
     case MouseMode.PLACE_NODE:
@@ -133,12 +133,12 @@ function draw() {
       dummyNode.position.y = p.mouseY;
       dummyNode.simPosition.x = p.mouseX;
       dummyNode.simPosition.y = p.mouseY;
-      dummyNode.draw(false);
+      dummyNode.draw(false, scene);
     break;
 
     case MouseMode.PLACE_BEAM_B:
       dummyBeam.dummyB = p.createVector(p.mouseX, p.mouseY);
-      dummyBeam.draw(false);
+      dummyBeam.draw(false,scene);
     break;
   }
 
@@ -287,12 +287,13 @@ function mousePressed():void {
  * Updates the html list showing the current design parts
  */
 function uiUpdateDesignParts() {
-  let hashMap:Map<string, number> = scene.getDesignParts();
+  scene.updateDesignParts();
 
-  let contentString: string = "<table><tr><th>Length</th><th></th><th>Count</th></tr>";
+  let contentString: string = "<table><tr><th></th><th>id</th><th>Length</th><th></th><th>Count</th></tr>";
 
-  for (const [key, value] of hashMap) {
-    contentString += "<tr><td>" + key + "</td><td>&nbsp:&nbsp</td><td>" + value + "</td></tr>"
+  for (const dp of scene.designPartsArray) {
+    contentString += "<tr><td><div style='width:20px; height:20px; background-color:" + dp.color.toString('#rrggbb') + "'></div>";
+    contentString += "<td>" + dp.typeId + "</td><td>" + dp.lengthRep + "</td><td>&nbsp:&nbsp</td><td>" + dp.count + "</td></tr>";
   }
 
   contentString += "</table>";
