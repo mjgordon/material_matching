@@ -25,8 +25,6 @@ export abstract class SceneElement {
     abstract simInit():void;
     abstract simTick():void;
     abstract getDisplayName():string;
-
-
 }
 
 

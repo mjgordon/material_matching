@@ -45,12 +45,8 @@ export class Scene{
         }
 
         let startX = 100;
-        let startY = p.height - 20;
         for (const sp of this.stock) {
-            p.fill(100);
-            p.stroke(0);
-            p.rectMode(p.CORNER);
-            p.rect(startX,startY - sp.size,10,sp.size);
+            sp.draw(this, startX);
             startX += 20;
         }
     }

@@ -1,6 +1,7 @@
 import {p} from "./sketch";
 import { io, Socket } from "socket.io-client";
 import { scene } from "./sketch";
+import { SEBeam } from "./SceneElement";
 
 let socket:Socket<ServerToClientEvents, ClientToServerEvents> = null;
 
@@ -43,9 +44,36 @@ export function requestSolve():void {
 
 function solveResponse(json:JSON) {
     //TODO: Weird hacky workaround
-    let obj:SolveResponseData = JSON.parse(JSON.stringify(json))
-    p.print(obj.requester_sid);
-    p.print(obj.usage)
+    let response:SolveResponseData = JSON.parse(JSON.stringify(json))
+
+    let stockCount:number = scene.stock.length;
+
+    let beamsCopy:SEBeam[] = [...scene.beams];
+
+    // First clear the existing matchings
+    for (const stock of scene.stock) {
+        stock.matchedBeams = [];
+    }
+
+    // Interpret the usage array 
+    for (let i = 0; i < response.usage.length; i++) {
+        const usage = response.usage[i];
+        if (usage == 0) {
+            continue;
+        }
+        const designPartId = Math.floor(i / stockCount);
+        const stockId = i % stockCount;
+
+        for (let j = 0; j < usage; j++) {
+            for (let k = 0; k < beamsCopy.length; k++) {
+                if (beamsCopy[k].designPartId == designPartId) {
+                    scene.stock[stockId].matchedBeams.push(beamsCopy[k]);
+                    beamsCopy.splice(k,1);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 interface SolveResponseData {
