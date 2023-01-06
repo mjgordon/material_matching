@@ -273,6 +273,20 @@ function mousePressed():void {
     case MouseMode.PLACE_BEAM_B:
       var nodePick:SENode = scene.pickNode(p.createVector(p.mouseX,p.mouseY));
       if (nodePick && !nodePick.equals(dummyBeam.childA)) {
+
+        // Don't create if beam already 'exists', this reads messy right now, cleanup if possible
+        let flag:boolean = false;
+        for (const beam of scene.beams) {
+          if ( (beam.childA.equals(dummyBeam.childA) && beam.childB.equals(nodePick)) ||
+          (beam.childA.equals(nodePick) && beam.childB.equals(dummyBeam.childA))) {
+            flag = true;
+            break;
+          }
+        }
+        if (flag) {
+          return;
+        }
+
         dummyBeam.childB = nodePick;
         dummyBeam.restLength = dummyBeam.childA.position.dist(dummyBeam.childB.position);
         scene.addElement(dummyBeam);
