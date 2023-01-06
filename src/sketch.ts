@@ -387,6 +387,7 @@ function setupControl() {
 
   let buttonSolveRequest = p.select("#buttonSolve");
   buttonSolveRequest.mousePressed(function() {
+    switchMode(MouseMode.EMPTY);
     socketio.requestSolve();
   });
 
