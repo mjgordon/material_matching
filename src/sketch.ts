@@ -6,11 +6,12 @@ import * as socketio from "./socketio";
 
 export let p:p5 = null;
 
-let controlDiv: p5.Element = null;
 export let scene:Scene = null;
 
+let controlDiv: p5.Element = null;
 let toolLabel: p5.Element = null;
 export let simLabel: p5.Element = null;
+export let solveResponseLabel: p5.Element = null;
 
 let selectedNameLabel: p5.Element = null;
 
@@ -80,6 +81,7 @@ function setup() {
 
   toolLabel = p.select("#toolLabel");
   simLabel = p.select("#simLabel");
+  solveResponseLabel = p.select("#solveResponseLabel");
 
   selectedNameLabel = p.select("#selectedNameLabel");
 
@@ -304,11 +306,11 @@ function mousePressed():void {
 function uiUpdateDesignParts() {
   scene.updateDesignParts();
 
-  let contentString: string = "<table><tr><th></th><th>id</th><th>Length</th><th></th><th>Count</th></tr>";
+  let contentString: string = "<table> <tr> <th></th> <th>id</th ><th>Length</th> <th></th> <th>Count</th> </tr>";
 
   for (const dp of scene.designPartsArray) {
-    contentString += "<tr><td><div style='width:20px; height:20px; background-color:" + dp.color.toString('#rrggbb') + "'></div>";
-    contentString += "<td>" + dp.typeId + "</td><td>" + dp.lengthRep + "</td><td>&nbsp:&nbsp</td><td>" + dp.count + "</td></tr>";
+    contentString += "<tr> <td><div style='width:20px; height:20px; background-color:" + dp.color.toString('#rrggbb') + "'></div></td>";
+    contentString += "<td>" + dp.typeId + "</td> <td>" + dp.lengthRep + "</td> <td>&nbsp:&nbsp</td> <td>" + dp.count + "</td> </tr>";
   }
 
   contentString += "</table>";
@@ -392,6 +394,44 @@ function setupControl() {
 
     scene.addElement(new SEBeam(scene.nodes[2],scene.nodes[5]));
     scene.addElement(new SEBeam(scene.nodes[3],scene.nodes[4]));
+
+    uiUpdateDesignParts();
+
+    scene.switchSimMode(SimMode.STOPPED);
+  });
+
+  let buttonDemoInfeasible = p.select("#buttonLoadDemoInfeasible");
+  buttonDemoInfeasible.mousePressed(function() {
+    scene.clear();
+    scene.addElement(new SENode(p.createVector(600,600),true));  // 0
+    scene.addElement(new SENode(p.createVector(800,600),true));  // 1
+
+    scene.addElement(new SENode(p.createVector(600,500),false)); // 2
+    scene.addElement(new SENode(p.createVector(800,500),false)); // 3
+    scene.addElement(new SENode(p.createVector(600,400),false)); // 4
+    scene.addElement(new SENode(p.createVector(800,400),false)); // 5
+
+    scene.addElement(new SENode(p.createVector(700,100),false)); // 6
+
+    scene.addElement(new SEBeam(scene.nodes[0],scene.nodes[2]));
+    scene.addElement(new SEBeam(scene.nodes[1],scene.nodes[3]));
+    scene.addElement(new SEBeam(scene.nodes[2],scene.nodes[3]));
+    scene.addElement(new SEBeam(scene.nodes[4],scene.nodes[5]));
+    scene.addElement(new SEBeam(scene.nodes[2],scene.nodes[4]));
+    scene.addElement(new SEBeam(scene.nodes[3],scene.nodes[5]));
+
+    scene.addElement(new SEBeam(scene.nodes[0],scene.nodes[3]));
+    scene.addElement(new SEBeam(scene.nodes[1],scene.nodes[2]));
+
+    scene.addElement(new SEBeam(scene.nodes[2],scene.nodes[5]));
+    scene.addElement(new SEBeam(scene.nodes[3],scene.nodes[4]));
+
+    scene.addElement(new SEBeam(scene.nodes[6],scene.nodes[0]));
+    scene.addElement(new SEBeam(scene.nodes[6],scene.nodes[1]));
+    scene.addElement(new SEBeam(scene.nodes[6],scene.nodes[2]));
+    scene.addElement(new SEBeam(scene.nodes[6],scene.nodes[3]));
+    scene.addElement(new SEBeam(scene.nodes[6],scene.nodes[4]));
+    scene.addElement(new SEBeam(scene.nodes[6],scene.nodes[5]));
 
     uiUpdateDesignParts();
 

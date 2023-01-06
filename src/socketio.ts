@@ -1,6 +1,6 @@
 import {p} from "./sketch";
 import { io, Socket } from "socket.io-client";
-import { scene } from "./sketch";
+import { scene, solveResponseLabel } from "./sketch";
 import { SEBeam } from "./SceneElement";
 
 let socket:Socket<ServerToClientEvents, ClientToServerEvents> = null;
@@ -9,7 +9,8 @@ interface ServerToClientEvents {
     noArg: () => void;
     basicEmit: (a: number, b: string, c: Buffer) => void;
     withAck: (d: string, callback: (e: number) => void) => void;
-    solve_response: (json:object) => void;
+    solve_response: (json:JSON) => void;
+    solve_infeasible: (json:JSON) => void;
 }
 
 
@@ -25,6 +26,10 @@ export function connectToDispatcher():void {
 
     socket.on("solve_response", (json:JSON) => {
         solveResponse(json);
+    });
+
+    socket.on("solve_infeasible", (json:JSON) => {
+        solveInfeasible();
     });
 
     socket.emit("client_id",JSON.stringify({type: "user"}));
@@ -74,6 +79,15 @@ function solveResponse(json:JSON) {
             }
         }
     }
+    solveResponseLabel.html("Solve Successful");
+}
+
+
+function solveInfeasible() {
+    for (const stock of scene.stock) {
+        stock.matchedBeams = [];
+    }
+    solveResponseLabel.html("Solve Infeasible");
 }
 
 interface SolveResponseData {
