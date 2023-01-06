@@ -1,6 +1,6 @@
 import * as p5 from "p5";
 
-import {DesignPart, Scene, SimMode} from "./Scene";
+import {Scene, SimMode} from "./Scene";
 import {SceneElement, SENode, SEBeam} from "./SceneElement";
 import * as socketio from "./socketio";
 
@@ -272,7 +272,7 @@ function mousePressed():void {
 
     case MouseMode.PLACE_BEAM_B:
       var nodePick:SENode = scene.pickNode(p.createVector(p.mouseX,p.mouseY));
-      if (nodePick) {
+      if (nodePick && !nodePick.equals(dummyBeam.childA)) {
         dummyBeam.childB = nodePick;
         dummyBeam.restLength = dummyBeam.childA.position.dist(dummyBeam.childB.position);
         scene.addElement(dummyBeam);
