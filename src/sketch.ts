@@ -2,7 +2,7 @@ import * as p5 from "p5";
 
 import {DesignPart, Scene, SimMode} from "./Scene";
 import {SceneElement, SENode, SEBeam} from "./SceneElement";
-import {connectToDispatcher, requestSolve} from "./socketio";
+import * as socketio from "./socketio";
 
 export let p:p5 = null;
 
@@ -98,7 +98,7 @@ function setup() {
 
   setupControl();
 
-  connectToDispatcher();
+  socketio.connectToDispatcher();
 }
 
 function windowResized() {
@@ -387,7 +387,7 @@ function setupControl() {
 
   let buttonSolveRequest = p.select("#buttonSolve");
   buttonSolveRequest.mousePressed(function() {
-    requestSolve();
+    socketio.requestSolve();
   });
 
 }

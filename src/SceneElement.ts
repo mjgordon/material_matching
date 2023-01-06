@@ -190,6 +190,7 @@ export class SEBeam extends SceneElement {
                 this.childB.simVelocity.add(pushDelta);
             }
         }
+
     }
 
     getDisplayName(): string {
@@ -204,6 +205,10 @@ export class SEBeam extends SceneElement {
         const t:number = Math.max(0, Math.min(1, Vector.dot(Vector.sub(vec,a), Vector.sub(b,a)) / l2));
         const projection:Vector = Vector.add(a, Vector.sub(b, a).mult(t));
         return( [ projection, projection.dist(vec)]);
+    }
+
+    getMidPoint():Vector {
+        return Vector.add(this.childA.position, this.childB.position).div(2);
     }
 
 

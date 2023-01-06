@@ -2,8 +2,6 @@ import {p,simLabel} from "./sketch";
 import {SceneElement, SENode, SEBeam} from "./SceneElement";
 import { Vector, Color } from "p5";
 import { StockPiece } from "./StockPiece";
-import { debugPort } from "process";
-
 
 
 export enum SimMode {
@@ -47,6 +45,12 @@ export class Scene{
         let startX = 100;
         for (const sp of this.stock) {
             sp.draw(this, startX);
+            startX += 20;
+        }
+
+        startX = 100;
+        for (const sp of this.stock) {
+            sp.drawMatchLines(this, startX, this.selectedElement);
             startX += 20;
         }
     }
