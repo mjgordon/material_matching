@@ -17,7 +17,7 @@ export class Scene{
 
     stock: StockPiece[] = [];
 
-    designPartsArray:DesignPart[];
+    designPartsArray:DesignPart[] = [];
 
     selectedElement:SceneElement = null;
 

@@ -22,7 +22,8 @@ interface ClientToServerEvents {
 
 export function connectToDispatcher():void {
     //TODO: Make this a toggle between local or webserver
-    socket = io("http://127.0.0.1:5000");
+    //socket = io("http://127.0.0.1:5000");
+    socket = io("http://134.209.198.60:52323");
 
     socket.on("solve_response", (json:JSON) => {
         solveResponse(json);
@@ -37,6 +38,17 @@ export function connectToDispatcher():void {
 
 
 export function requestSolve():void {
+    if (scene.designPartsArray.length == 0) {
+        solveResponseLabel.html("No Design in Scene");
+        return;
+    }
+
+    if (scene.getStockLengths().length == 0) {
+        solveResponseLabel.html("No Stock in Scene");
+        return;
+    }
+    
+
     const jsonMap:Record<string, any> = {};
     jsonMap.method = "waste";
     jsonMap.stock_lengths = scene.getStockLengths();
