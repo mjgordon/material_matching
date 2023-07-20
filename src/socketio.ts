@@ -5,6 +5,8 @@ import { SEBeam } from "./SceneElement";
 
 let socket:Socket<ServerToClientEvents, ClientToServerEvents> = null;
 
+let solveWaiting:boolean = false;
+
 interface ServerToClientEvents {
     noArg: () => void;
     basicEmit: (a: number, b: string, c: Buffer) => void;
@@ -47,6 +49,11 @@ export function requestSolve():void {
         solveResponseLabel.html("No Stock in Scene");
         return;
     }
+
+    if (solveWaiting) {
+        solveResponseLabel.html("Solving Please Wait");
+        return;
+    }
     
 
     const jsonMap:Record<string, any> = {};
@@ -55,6 +62,10 @@ export function requestSolve():void {
 
     jsonMap.part_lengths = scene.designPartsArray.map(dp => dp.length);
     jsonMap.part_requests = scene.designPartsArray.map(dp => dp.count);
+
+    solveWaiting = true;
+
+    solveResponseLabel.html("Solving");
 
     socket.emit("solve_request",JSON.stringify(jsonMap));
 }
@@ -92,6 +103,8 @@ function solveResponse(json:JSON) {
         }
     }
     solveResponseLabel.html("Solve Successful");
+
+    solveWaiting = false;
 }
 
 
@@ -100,6 +113,8 @@ function solveInfeasible() {
         stock.matchedBeams = [];
     }
     solveResponseLabel.html("Solve Infeasible");
+
+    solveWaiting = false;
 }
 
 interface SolveResponseData {

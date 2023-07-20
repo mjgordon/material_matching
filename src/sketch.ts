@@ -20,14 +20,14 @@ let stockPieceDiv: p5.Element = null;
 
 
 enum MouseMode {
-  EMPTY,
+  SELECT,
   PLACE_SUPPORT,
   PLACE_NODE,
   PLACE_BEAM_A,
   PLACE_BEAM_B
 }
 
-let currentMode: MouseMode = MouseMode.EMPTY;
+let currentMode: MouseMode = MouseMode.SELECT;
 
 let dummySupport: SENode;
 let dummyNode: SENode;
@@ -183,8 +183,8 @@ function switchMode(mode: MouseMode) {
   currentMode = mode;
   dummySupport.visible = false;
   switch(currentMode) {
-    case MouseMode.EMPTY:
-      toolLabel.html("No Tool");
+    case MouseMode.SELECT:
+      toolLabel.html("Select");
     break;
     case MouseMode.PLACE_SUPPORT:
       dummySupport.visible = true;
@@ -212,7 +212,7 @@ function switchMode(mode: MouseMode) {
 
 function keyPressed() {
   if (p.keyCode == p.ESCAPE) {
-    switchMode(MouseMode.EMPTY);
+    switchMode(MouseMode.SELECT);
   }
   
 
@@ -251,7 +251,7 @@ function mousePressed():void {
   }
 
   switch(currentMode) {
-    case MouseMode.EMPTY:
+    case MouseMode.SELECT:
       var elementPick:SceneElement = scene.pickElement(p.createVector(p.mouseX,p.mouseY));
       setSelectedElement(elementPick);
     break;
@@ -340,6 +340,11 @@ function uiUpdateStockPieces() {
  * Attach functionality to HTML Objects
  */
 function setupControl() {
+  let buttonSelect = p.select("#buttonSelect");
+  buttonSelect.mousePressed(function() {
+    switchMode(MouseMode.SELECT);
+  });
+
   let buttonSupport = p.select("#buttonCreateSupport");
   buttonSupport.mousePressed(function() {
     switchMode(MouseMode.PLACE_SUPPORT);
@@ -441,7 +446,7 @@ function setupControl() {
 
   let buttonSolveRequest = p.select("#buttonSolve");
   buttonSolveRequest.mousePressed(function() {
-    switchMode(MouseMode.EMPTY);
+    switchMode(MouseMode.SELECT);
     socketio.requestSolve();
   });
 
