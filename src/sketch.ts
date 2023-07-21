@@ -471,8 +471,8 @@ function setupControl() {
   buttonElementDelete = p.select("#buttonElementDelete");
   buttonElementDelete.mousePressed(function() {
     if (scene.selectedElement != null) {
-      console.log("button delete");
       scene.removeElement(scene.selectedElement);
+      uiUpdateDesignParts();
     }
   });
 
