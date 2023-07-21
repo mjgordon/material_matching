@@ -2,6 +2,7 @@ import {p,simLabel} from "./sketch";
 import {SceneElement, SENode, SEBeam} from "./SceneElement";
 import { Vector, Color } from "p5";
 import { StockPiece } from "./StockPiece";
+import { sampleViridis } from "./Util";
 
 
 export enum SimMode {
@@ -200,7 +201,6 @@ export class Scene{
      * Update part design mapping
      */
     updateDesignParts() {
-        p.colorMode(p.HSB,1.0);
         let designParts:Map<string,DesignPart> = new Map<string,DesignPart>();
         this.designPartsArray = [];
 
@@ -227,9 +227,9 @@ export class Scene{
         }
 
         for (var i = 0; i < this.designPartsArray.length; i++) {
-            this.designPartsArray[i].color = p.color(1.0 * i / this.designPartsArray.length, 1,1);
+            const lengthFactor = p.map(this.designPartsArray[i].length,100,500,0,1,true);
+            this.designPartsArray[i].color = sampleViridis(lengthFactor);
         }
-        p.colorMode(p.RGB,255);
     }
 
 

@@ -4,6 +4,8 @@ import {Scene, SimMode} from "./Scene";
 import {SceneElement, SENode, SEBeam} from "./SceneElement";
 import * as socketio from "./socketio";
 
+import * as util from "./Util";
+
 export let p:p5 = null;
 
 export let scene:Scene = null;
@@ -67,6 +69,8 @@ function setup() {
   console.log("🚀 - Setup initialized - P5 is running");
   p.createCanvas(p.windowWidth, p.windowHeight)
   p.rectMode(p.CENTER).noFill().frameRate(30);
+
+  util.setupPalette();
 
   scene = new Scene();
 
