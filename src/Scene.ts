@@ -42,13 +42,13 @@ export class Scene{
             se.draw(se.equals(this.selectedElement), this);
         }
 
-        let startX = 100;
+        let startX = 300;
         for (const sp of this.stock) {
             sp.draw(this, startX);
             startX += 20;
         }
 
-        startX = 100;
+        startX = 300;
         for (const sp of this.stock) {
             sp.drawMatchLines(this, startX, this.selectedElement);
             startX += 20;
@@ -63,6 +63,36 @@ export class Scene{
         }
         else if (se instanceof SEBeam) {
             this.beams.push(se);
+        }
+    }
+
+    
+    removeElement(se:SceneElement) {
+        if (se instanceof SENode) {
+            var beamsToRemove: SEBeam[] = []
+            for (const beam of this.beams) {
+                if (beam.childA === se || beam.childB === se) {
+                    beamsToRemove.push(beam);
+                }
+            }
+            for (const beamToRemove of beamsToRemove) {
+                this.removeElement(beamToRemove);
+            }
+            
+            const index = this.nodes.indexOf(se, 0);
+            if (index > -1) {
+                this.nodes.splice(index, 1);
+            }
+        }
+        else if (se instanceof SEBeam) {
+            const index = this.beams.indexOf(se, 0);
+            if (index > -1) {
+                this.beams.splice(index, 1);
+            }
+
+            for (const sp of this.stock) {
+                sp.removeBeam(se);
+            }
         }
     }
 

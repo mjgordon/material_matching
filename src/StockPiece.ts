@@ -64,4 +64,11 @@ export class StockPiece {
             
         }
     }
+
+    removeBeam(beam:SEBeam) {
+        const index = this.matchedBeams.indexOf(beam, 0);
+        if (index > -1) {
+            this.matchedBeams.splice(index, 1);
+        } 
+    }
 }

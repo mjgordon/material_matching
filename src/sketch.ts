@@ -8,7 +8,6 @@ export let p:p5 = null;
 
 export let scene:Scene = null;
 
-let controlDiv: p5.Element = null;
 let toolLabel: p5.Element = null;
 export let simLabel: p5.Element = null;
 export let solveResponseLabel: p5.Element = null;
@@ -17,6 +16,8 @@ let selectedNameLabel: p5.Element = null;
 
 let designPartTypeDiv: p5.Element = null;
 let stockPieceDiv: p5.Element = null;
+
+let buttonElementDelete: p5.Element = null;
 
 
 enum MouseMode {
@@ -69,15 +70,36 @@ function setup() {
 
   scene = new Scene();
 
-  controlDiv = p.select("#controlDiv");
-  controlDiv.mouseOver(function() {
+
+  const funMouseOver = function() {
     mouseOverControl = true;
     p.noCursor();
-  });
-  controlDiv.mouseOut(function() {
+  }
+  const funMouseOut = function() {
     mouseOverControl = false;
     p.cursor(p.ARROW);
-  });
+  }
+
+  let div = null;
+  div = p.select("#controlDiv");
+  div.mouseOver(funMouseOver);
+  div.mouseOut(funMouseOut);
+
+  div = p.select("#controlElementDiv");
+  div.mouseOver(funMouseOver);
+  div.mouseOut(funMouseOut);
+
+  div = p.select("#matchingDiv");
+  div.mouseOver(funMouseOver);
+  div.mouseOut(funMouseOut);
+
+  div = p.select("#stockPiecesDiv");
+  div.mouseOver(funMouseOver);
+  div.mouseOut(funMouseOut);
+
+  div = p.select("#designPartsDiv");
+  div.mouseOver(funMouseOver);
+  div.mouseOut(funMouseOut);
 
   toolLabel = p.select("#toolLabel");
   simLabel = p.select("#simLabel");
@@ -160,6 +182,7 @@ function setSelectedElement(se:SceneElement):void {
   scene.selectedElement = se;
   if (se == null) {
     selectedNameLabel.html("");
+    buttonElementDelete.hide();
   }
   else {
     let contentString = se.getDisplayName() + " " + se.id + "<br>";
@@ -171,6 +194,7 @@ function setSelectedElement(se:SceneElement):void {
       contentString += "Length : " + restLength;
     }
     selectedNameLabel.html( contentString);
+    buttonElementDelete.show();
   }
 }
 
@@ -379,13 +403,13 @@ function setupControl() {
   let buttonDemo = p.select("#buttonLoadDemo");
   buttonDemo.mousePressed(function() {
     scene.clear();
-    scene.addElement(new SENode(p.createVector(600,600),true));  // 0
-    scene.addElement(new SENode(p.createVector(800,600),true));  // 1
+    scene.addElement(new SENode(p.createVector(700,600),true));  // 0
+    scene.addElement(new SENode(p.createVector(900,600),true));  // 1
 
-    scene.addElement(new SENode(p.createVector(600,500),false)); // 2
-    scene.addElement(new SENode(p.createVector(800,500),false)); // 3
-    scene.addElement(new SENode(p.createVector(600,400),false)); // 4
-    scene.addElement(new SENode(p.createVector(800,400),false)); // 5
+    scene.addElement(new SENode(p.createVector(700,500),false)); // 2
+    scene.addElement(new SENode(p.createVector(900,500),false)); // 3
+    scene.addElement(new SENode(p.createVector(700,400),false)); // 4
+    scene.addElement(new SENode(p.createVector(900,400),false)); // 5
 
     scene.addElement(new SEBeam(scene.nodes[0],scene.nodes[2]));
     scene.addElement(new SEBeam(scene.nodes[1],scene.nodes[3]));
@@ -441,6 +465,15 @@ function setupControl() {
     uiUpdateDesignParts();
 
     scene.switchSimMode(SimMode.STOPPED);
+  });
+
+
+  buttonElementDelete = p.select("#buttonElementDelete");
+  buttonElementDelete.mousePressed(function() {
+    if (scene.selectedElement != null) {
+      console.log("button delete");
+      scene.removeElement(scene.selectedElement);
+    }
   });
 
 
