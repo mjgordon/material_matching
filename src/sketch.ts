@@ -406,14 +406,16 @@ function setupControl() {
 
   let buttonDemo = p.select("#buttonLoadDemo");
   buttonDemo.mousePressed(function() {
-    scene.clear();
-    scene.addElement(new SENode(p.createVector(700,600),true));  // 0
-    scene.addElement(new SENode(p.createVector(900,600),true));  // 1
+    const mid = Math.floor(p.width / 2 / 100) * 100;
 
-    scene.addElement(new SENode(p.createVector(700,500),false)); // 2
-    scene.addElement(new SENode(p.createVector(900,500),false)); // 3
-    scene.addElement(new SENode(p.createVector(700,400),false)); // 4
-    scene.addElement(new SENode(p.createVector(900,400),false)); // 5
+    scene.clear();
+    scene.addElement(new SENode(p.createVector(mid - 100,600),true));  // 0
+    scene.addElement(new SENode(p.createVector(mid + 100,600),true));  // 1
+
+    scene.addElement(new SENode(p.createVector(mid - 100,500),false)); // 2
+    scene.addElement(new SENode(p.createVector(mid + 100,500),false)); // 3
+    scene.addElement(new SENode(p.createVector(mid - 100,400),false)); // 4
+    scene.addElement(new SENode(p.createVector(mid + 100,400),false)); // 5
 
     scene.addElement(new SEBeam(scene.nodes[0],scene.nodes[2]));
     scene.addElement(new SEBeam(scene.nodes[1],scene.nodes[3]));
@@ -435,16 +437,17 @@ function setupControl() {
 
   let buttonDemoInfeasible = p.select("#buttonLoadDemoInfeasible");
   buttonDemoInfeasible.mousePressed(function() {
+    const mid = Math.floor(p.width / 2 / 100) * 100;
     scene.clear();
-    scene.addElement(new SENode(p.createVector(600,600),true));  // 0
-    scene.addElement(new SENode(p.createVector(800,600),true));  // 1
+    scene.addElement(new SENode(p.createVector(mid - 100,600),true));  // 0
+    scene.addElement(new SENode(p.createVector(mid + 100,600),true));  // 1
 
-    scene.addElement(new SENode(p.createVector(600,500),false)); // 2
-    scene.addElement(new SENode(p.createVector(800,500),false)); // 3
-    scene.addElement(new SENode(p.createVector(600,400),false)); // 4
-    scene.addElement(new SENode(p.createVector(800,400),false)); // 5
+    scene.addElement(new SENode(p.createVector(mid - 100,500),false)); // 2
+    scene.addElement(new SENode(p.createVector(mid + 100,500),false)); // 3
+    scene.addElement(new SENode(p.createVector(mid - 100,400),false)); // 4
+    scene.addElement(new SENode(p.createVector(mid + 100,400),false)); // 5
 
-    scene.addElement(new SENode(p.createVector(700,100),false)); // 6
+    scene.addElement(new SENode(p.createVector(mid ,100),false)); // 6
 
     scene.addElement(new SEBeam(scene.nodes[0],scene.nodes[2]));
     scene.addElement(new SEBeam(scene.nodes[1],scene.nodes[3]));
