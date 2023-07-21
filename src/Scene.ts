@@ -208,7 +208,7 @@ export class Scene{
 
         for (const beam of this.beams) {
 
-            let lengthString:string = beam.restLength.toFixed(3).toString();
+            let lengthString:string = beam.restLength.toFixed(1).toString();
 
             let dp:DesignPart;
 

@@ -1,7 +1,6 @@
 import { io, Socket } from "socket.io-client";
-import { scene, solveResponseLabel } from "./sketch";
+import { scene, solveResponseLabel, solveMethod } from "./sketch";
 import { SEBeam } from "./SceneElement";
-import { solveMethod } from "./sketch"
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents> = null;
 
@@ -59,6 +58,7 @@ export function requestSolve(method: string): void {
     const jsonMap: Record<string, any> = {};
     jsonMap.method = method;
     jsonMap.stock_lengths = scene.getStockLengths();
+    jsonMap.model_args = {"preprocess":0};
 
     if (solveMethod == "order") {
         jsonMap.part_lengths = scene.beams.map( beam => beam.restLength);
@@ -126,8 +126,30 @@ function solveResponse(json: JSON) {
         }
     }
 
+    console.log(response);
+    const logParts = response.log_string.split(",");
+    var goalValue:number = Number(logParts[2]);
+    var wasteValue:string = Number(logParts[3]).toFixed(1);
 
-    solveResponseLabel.html("Solve Successful");
+    var responseString = "Solve Successful <br>";
+
+    if (solveMethod === "default") {
+        responseString += "Solution uses " + Math.floor(goalValue) + " stock pieces and produces " + wasteValue + " cm of cutoff waste";
+    }
+    else if (solveMethod === "waste") {
+        responseString += "Solution produces " + wasteValue + " cm of cutoff waste";
+    }
+    else if (solveMethod === "max") {
+        responseString += "Solution has a contiguous score of " + goalValue.toFixed(1) + " and produces " + wasteValue + " cm of cutoff waste";
+    }
+    else if (solveMethod === "order") {
+        responseString += "When produced in order, solution produces " + wasteValue + " cm of cutoff waste";
+    }
+    else if (solveMethod === "homogenous") {
+        responseString += "Solution has " +  Math.floor(goalValue) + " setup changes and produces " + wasteValue + " cm of cutoff waste";
+    }
+
+    solveResponseLabel.html(responseString);
 
     solveWaiting = false;
 }
@@ -145,6 +167,7 @@ function solveInfeasible() {
 interface SolveResponseData {
     requester_sid: string;
     usage: number[];
+    log_string: string;
 }
 
 
