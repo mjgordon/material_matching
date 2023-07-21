@@ -24,6 +24,7 @@ export class StockPiece {
             p.fill(100);
         }
         
+        p.strokeWeight(1);
         p.stroke(0);
         p.rectMode(p.CORNER);
         p.rect(startX,startY,stockWidth,this.size);

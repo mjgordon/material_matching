@@ -10,7 +10,6 @@ export let p:p5 = null;
 
 export let scene:Scene = null;
 
-let toolLabel: p5.Element = null;
 export let simLabel: p5.Element = null;
 export let solveResponseLabel: p5.Element = null;
 
@@ -20,6 +19,8 @@ let designPartTypeDiv: p5.Element = null;
 let stockPieceDiv: p5.Element = null;
 
 let buttonElementDelete: p5.Element = null;
+
+export let solveMethod = "waste";
 
 
 enum MouseMode {
@@ -105,7 +106,6 @@ function setup() {
   div.mouseOver(funMouseOver);
   div.mouseOut(funMouseOut);
 
-  toolLabel = p.select("#toolLabel");
   simLabel = p.select("#simLabel");
   solveResponseLabel = p.select("#solveResponseLabel");
 
@@ -482,11 +482,36 @@ function setupControl() {
     }
   });
 
+  let radioModeStock:HTMLElement = document.getElementById("radioModeStockLabel");
+  radioModeStock.addEventListener("mousedown", (event) => {
+    solveMethod = "default";
+  });
+
+  let radioModeWaste:HTMLElement = document.getElementById("radioModeWasteLabel");
+  radioModeWaste.addEventListener("mousedown", (event) => {
+    solveMethod = "waste";
+  });
+
+  let radioModeContiguous:HTMLElement = document.getElementById("radioModeContiguousLabel");
+  radioModeContiguous.addEventListener("mousedown", (event) => {
+    solveMethod = "max";
+  });
+
+  let radioModeOrder:HTMLElement = document.getElementById("radioModeOrderLabel");
+  radioModeOrder.addEventListener("mousedown", (event) => {
+    solveMethod = "order";
+  });
+
+  let radioModeToolChange:HTMLElement = document.getElementById("radioModeToolChangeLabel");
+  radioModeToolChange.addEventListener("mousedown", (event) => {
+    solveMethod = "homogenous";
+  });
+
 
   let buttonSolveRequest = p.select("#buttonSolve");
   buttonSolveRequest.mousePressed(function() {
     switchMode(MouseMode.SELECT);
-    socketio.requestSolve();
+    socketio.requestSolve(solveMethod);
   });
 
 }

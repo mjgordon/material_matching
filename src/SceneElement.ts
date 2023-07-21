@@ -1,7 +1,7 @@
 import {Vector} from "p5";
 
 import {p} from "./sketch";
-import {Scene} from "./scene";
+import {Scene} from "./Scene";
 
 export abstract class SceneElement {
     static counter:number = 0;

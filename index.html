@@ -4,7 +4,7 @@
 
     <div id="uiLeft" style="position: absolute; left: 0px; top: 0px;">
       <div name="controls" id="controlDiv"  class="controlBox">
-        <div><b>Controls</b></div>
+        <div><b>Design Controls</b></div>
         <form class="formBoxed">
           <input type="radio" name="radioTools" id="radioToolSelect"/>
           <label for="radioToolSelect" id="radioToolSelectLabel">Select</label>
@@ -15,11 +15,9 @@
           <input type="radio" name="radioTools" id="radioToolBeam"/>
           <label for="radioToolBeam" id="radioToolBeamLabel">Create Beam</label>
         </form>
-
-        <div id="toolLabel" style="padding-left:5px; padding-top:5px">Select</div>
   
         <hr class="hrUI">
-
+        <div><b>Premade Designs</b></div>
         <button class="button pushButton" id="buttonLoadDemo">Load Feasible Example</button>
         <button class="button pushButton" id="buttonLoadDemoInfeasible">Load Infeasible Example</button>
 
@@ -42,8 +40,24 @@
     <div id="uiRight" style="position: absolute; right: 0px; top:0px;">
       <div id="matchingDiv" class="controlBox">
         <div><b>Matching</b></div>
-        <button class="button pushButton" id="buttonSolve">Solve</button>
-        <div id="solveResponseLabel" style="padding-left:5px"></div>
+        <form class="formBoxed">
+          <input type="radio" name="radioMode" id="radioModeStock"/>
+          <label for="radioModeStock" id="radioModeStockLabel">Minimize Stock Pieces</label>
+          <input type="radio" name="radioMode" id="radioModeWaste" checked/>
+          <label for="radioModeWaste" id="radioModeWasteLabel">Minimize Cutoff Waste</label>
+          <input type="radio" name="radioMode" id="radioModeContiguous"/>
+          <label for="radioModeContiguous" id="radioModeContiguousLabel">Maximize Future Value</label>
+          <input type="radio" name="radioMode" id="radioModeOrder"/>
+          <label for="radioModeOrder" id="radioModeOrderLabel">Produce in Order</label>
+          <input type="radio" name="radioMode" id="radioModeToolChange"/>
+          <label for="radioModeToolChange" id="radioModeToolChangeLabel">Minimize Tool Changes</label>
+        </form>
+        <div style="text-align:center">
+          <button class="button pushButton" id="buttonSolve" style="text-align:center">Solve</button>
+          <div id="solveResponseLabel" style="padding-left:5px"></div>
+        </div>
+        
+        
       </div>
       <br>
       <div id="stockPiecesDiv" class="controlBox">
