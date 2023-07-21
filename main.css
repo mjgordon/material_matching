@@ -1,3 +1,46 @@
+:root {
+    --button-unselected: #f0f0f0;
+    --button-hover: #e0e0e0;
+    --button-selected: #a0a0a0;
+    --blue: blue;
+}
+
+/*
+*,
+*:after,
+*:before {
+    box-sizing: border-box;
+}
+*/
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.formBoxed label {
+    background:var(--button-unselected);
+    display: inline-block;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.formBoxed input[type="radio"] {
+    display: none;
+}
+
+.formBoxed input[type="radio"]:checked+label {
+    background:var(--button-selected);
+}
+
+.formBoxed label::selection {
+    background:none;
+}
+
+
+
 body {
     font-family: "Roboto", Arial, Helvetica, sans-serif;
 }
@@ -7,21 +50,39 @@ body {
     font-size: 16px;
     margin: 5px;
     padding: 5px;
+    border: none;
+    border-radius: 5px;
 }
+
+
+/* Buttons using default color changing behavior */
+.pushbutton {
+    background-color: var(--button-unselected);
+}
+
+.pushbutton:hover {
+    background-color: var(--button-hover);
+}
+
+.pushbutton:active {
+    background-color: var(--button-selected);
+}
+
+
 
 .controlBox {
     background-color: lightslategray;
     font-size: 16px;
     padding: 10px;
-    margin:10px;
-    display:inline-block;
+    margin: 10px;
+    display: inline-block;
     width: 200px;
 }
 
 .titleSpan {
-    margin-top:10px; 
+    margin-top: 10px;
     margin-bottom: 10px;
-    padding-top:10px; 
+    padding-top: 10px;
     padding-bottom: 10px;
 }
 

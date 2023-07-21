@@ -210,29 +210,28 @@ function setSelectedElement(se:SceneElement):void {
 function switchMode(mode: MouseMode) {
   currentMode = mode;
   dummySupport.visible = false;
+
+
   switch(currentMode) {
     case MouseMode.SELECT:
-      toolLabel.html("Select");
+      
     break;
     case MouseMode.PLACE_SUPPORT:
       dummySupport.visible = true;
-      toolLabel.html("Support");
+      
     break;
 
     case MouseMode.PLACE_NODE:
       dummyNode.visible = true;
-      toolLabel.html("Node");
     break;
 
     case MouseMode.PLACE_BEAM_A:
       dummyBeam = new SEBeam(null,null);
       dummyBeam.visible = true;
-      toolLabel.html("Beam First Node");
     break;
 
     case MouseMode.PLACE_BEAM_B:
       dummyBeam.visible = true;
-      toolLabel.html("Beam Second Node");
     break;
   }
 }
@@ -368,23 +367,23 @@ function uiUpdateStockPieces() {
  * Attach functionality to HTML Objects
  */
 function setupControl() {
-  let buttonSelect = p.select("#buttonSelect");
-  buttonSelect.mousePressed(function() {
+  let radioToolSelect:HTMLElement = document.getElementById("radioToolSelectLabel");
+  radioToolSelect.addEventListener("mousedown", (event) => {
     switchMode(MouseMode.SELECT);
   });
 
-  let buttonSupport = p.select("#buttonCreateSupport");
-  buttonSupport.mousePressed(function() {
+  let radioToolSupport:HTMLElement = document.getElementById("radioToolSupportLabel");
+  radioToolSupport.addEventListener("mousedown", (event) => {
     switchMode(MouseMode.PLACE_SUPPORT);
   });
 
-  let buttonNode = p.select("#buttonCreateNode");
-  buttonNode.mousePressed(function() {
+  let radioToolNode:HTMLElement = document.getElementById("radioToolNodeLabel");
+  radioToolNode.addEventListener("mousedown", (event) => {
     switchMode(MouseMode.PLACE_NODE);
   });
 
-  let buttonBeam = p.select("#buttonCreateBeam");
-  buttonBeam.mousePressed(function() {
+  let radioToolBeam:HTMLElement = document.getElementById("radioToolBeamLabel");
+  radioToolBeam.addEventListener("mousedown", (event) => {
     switchMode(MouseMode.PLACE_BEAM_A);
   });
 

@@ -5,40 +5,44 @@
     <div id="uiLeft" style="position: absolute; left: 0px; top: 0px;">
       <div name="controls" id="controlDiv"  class="controlBox">
         <div><b>Controls</b></div>
-        <button class="button" id="buttonSelect">Select</button>
-        <br>
-        <button class="button" id="buttonCreateSupport"> Create Support</button>
-        <br>  
-        <button class="button" id="buttonCreateNode" > Create Node</button>
-        <br>
-        <button class="button" id="buttonCreateBeam" > Create Beam</button>
-        <br>
-        <div id="toolLabel" style="padding-left:5px">Select</div>
+        <form class="formBoxed">
+          <input type="radio" name="radioTools" id="radioToolSelect"/>
+          <label for="radioToolSelect" id="radioToolSelectLabel">Select</label>
+          <input type="radio" name="radioTools" id="radioToolSupport"/>
+          <label for="radioToolSupport" id="radioToolSupportLabel">Create Support</label>
+          <input type="radio" name="radioTools" id="radioToolNode"/>
+          <label for="radioToolNode" id="radioToolNodeLabel">Create Node</label>
+          <input type="radio" name="radioTools" id="radioToolBeam"/>
+          <label for="radioToolBeam" id="radioToolBeamLabel">Create Beam</label>
+        </form>
+
+        <div id="toolLabel" style="padding-left:5px; padding-top:5px">Select</div>
   
         <hr class="hrUI">
-  
-        <button class="button" id="buttonPlay">Play</button>
-        <button class="button" id="buttonPause">Pause</button>
-        <button class="button" id="buttonReset">Reset</button>
-        <div id="simLabel" style="padding-left:5px">Stopped </div>
+
+        <button class="button pushButton" id="buttonLoadDemo">Load Feasible Example</button>
+        <button class="button pushButton" id="buttonLoadDemoInfeasible">Load Infeasible Example</button>
 
         <hr class="hrUI">
-
-        <button class="button" id="buttonLoadDemo">Load Feasible Example</button>
-        <button class="button" id="buttonLoadDemoInfeasible">Load Infeasible Example</button>
+  
+        <!--Hidden as not currently important for the matching demo-->
+        <button class="button pushButton" id="buttonPlay" style="display:none">Play</button>
+        <button class="button pushButton" id="buttonPause" style="display:none">Pause</button>
+        <button class="button pushButton" id="buttonReset" style="display:none">Reset</button>
+        <div id="simLabel" style="padding-left:5px; display:none">Stopped </div>
       </div>
       <br>
       <div name="controls_element" id="controlElementDiv" class="controlBox">
         <div><b>Element</b></div>
         <div id="selectedNameLabel" style="padding-left:5px"> </div>
-        <button class="button" id="buttonElementDelete" style="display:none">Delete</button>
+        <button class="button pushButton" id="buttonElementDelete" style="display:none">Delete</button>
       </div>
     </div>
 
     <div id="uiRight" style="position: absolute; right: 0px; top:0px;">
       <div id="matchingDiv" class="controlBox">
         <div><b>Matching</b></div>
-        <button class="button" id="buttonSolve">Solve</button>
+        <button class="button pushButton" id="buttonSolve">Solve</button>
         <div id="solveResponseLabel" style="padding-left:5px"></div>
       </div>
       <br>
