@@ -67,6 +67,14 @@ export class Scene{
         }
     }
 
+    addNode(x:number, y:number,support:boolean) {
+        this.addElement(new SENode(p.createVector(x,y),support));
+    }
+
+    addBeam(idA:number, idB:number) {
+        this.addElement(new SEBeam(this.nodes[idA],this.nodes[idB]));
+    }
+
     
     removeElement(se:SceneElement) {
         if (se instanceof SENode) {

@@ -422,6 +422,14 @@ function setupControl() {
     scene.switchSimMode(SimMode.STOPPED);
   });
 
+  let buttonDemoBridge = p.select("#buttonLoadDemoBridge");
+  buttonDemoBridge.mousePressed(function() {
+    sampleData.loadDesignBridge(p,scene);
+    uiUpdateDesignParts();
+    scene.switchSimMode(SimMode.STOPPED);
+  });
+
+
 
   buttonElementDelete = p.select("#buttonElementDelete");
   buttonElementDelete.mousePressed(function() {
