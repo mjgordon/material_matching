@@ -1,122 +1,123 @@
 <html>
-  <head>
-    <link rel="stylesheet" href="main.css">
 
-    <div id="uiLeft" style="position: absolute; left: 0px; top: 0px;">
-      <div name="controls" id="controlDiv"  class="controlBox">
-        <div><b>Design Controls</b></div>
-        <form class="formBoxed">
-          <input type="radio" name="radioTools" id="radioToolSelect"/>
-          <label for="radioToolSelect" id="radioToolSelectLabel">Select</label>
-          <input type="radio" name="radioTools" id="radioToolSupport"/>
-          <label for="radioToolSupport" id="radioToolSupportLabel">Create Support</label>
-          <input type="radio" name="radioTools" id="radioToolNode"/>
-          <label for="radioToolNode" id="radioToolNodeLabel">Create Node</label>
-          <input type="radio" name="radioTools" id="radioToolBeam"/>
-          <label for="radioToolBeam" id="radioToolBeamLabel">Create Beam</label>
-        </form>
-  
-        <hr class="hrUI">
-        <div><b>Premade Designs</b></div>
+<head>
+  <link rel="stylesheet" href="main.css">
+
+  <div id="uiLeft" style="position: absolute; left: 0px; top: 0px;">
+    <div name="controls" id="controlDiv" class="controlBox">
+      <div><b>Design Controls</b></div>
+      <form class="formBoxed">
+        <input type="radio" name="radioTools" id="radioToolSelect" />
+        <label for="radioToolSelect" id="radioToolSelectLabel">Select</label>
+        <input type="radio" name="radioTools" id="radioToolSupport" />
+        <label for="radioToolSupport" id="radioToolSupportLabel">Create Support</label>
+        <input type="radio" name="radioTools" id="radioToolNode" />
+        <label for="radioToolNode" id="radioToolNodeLabel">Create Node</label>
+        <input type="radio" name="radioTools" id="radioToolBeam" />
+        <label for="radioToolBeam" id="radioToolBeamLabel">Create Beam</label>
+      </form>
+
+      <hr class="hrUI">
+      <div><b>Premade Designs</b></div>
+      <div style="display: flex; flex-wrap: wrap; flex-direction: column;">
         <button class="button pushButton" id="buttonLoadDemo">Load Feasible Example</button>
         <button class="button pushButton" id="buttonLoadDemoInfeasible">Load Infeasible Example</button>
         <button class="button pushButton" id="buttonLoadDemoBridge">Load Bridge Example</button>
+      </div>
 
-        <hr class="hrUI">
-        <div><b>Material Stock Inventory</b></div>
+
+
+      <hr class="hrUI">
+      <div><b>Material Stock Inventory</b></div>
+      <div style="display: flex; flex-wrap: wrap; flex-direction: column;">
         <button class="button pushButton" id="buttonLoadInventoryExample">Load Example Inventory</button>
         <button class="button pushButton" id="buttonLoadInventoryRandom">Load Random Inventory</button>
+      </div>
 
-        <hr class="hrUI" style="display:none">
-  
-        <!--Hidden as not currently important for the matching demo-->
-        <button class="button pushButton" id="buttonPlay" style="display:none">Play</button>
-        <button class="button pushButton" id="buttonPause" style="display:none">Pause</button>
-        <button class="button pushButton" id="buttonReset" style="display:none">Reset</button>
-        <div id="simLabel" style="padding-left:5px; display:none">Stopped </div>
+
+      <hr class="hrUI" style="display:none">
+
+      <!--Hidden as not currently important for the matching demo-->
+      <button class="button pushButton" id="buttonPlay" style="display:none">Play</button>
+      <button class="button pushButton" id="buttonPause" style="display:none">Pause</button>
+      <button class="button pushButton" id="buttonReset" style="display:none">Reset</button>
+      <div id="simLabel" style="padding-left:5px; display:none">Stopped </div>
+    </div>
+    <br>
+    <div name="controls_element" id="controlElementDiv" class="controlBox">
+      <div><b>Selected Element</b></div>
+      <div id="selectedNameLabel" style="padding-left:5px"> </div>
+      <button class="button pushButton" id="buttonElementDelete" style="display:none">Delete</button>
+    </div>
+  </div>
+
+  <div id="uiRight" style="position: absolute; right: 0px; top:0px;">
+    <div id="matchingDiv" class="controlBox">
+      <div><b>Matching</b></div>
+      <form class="formBoxed">
+        <input type="radio" name="radioMode" id="radioModeStock" />
+        <label for="radioModeStock" id="radioModeStockLabel">Minimize Stock Pieces</label>
+        <input type="radio" name="radioMode" id="radioModeWaste" checked />
+        <label for="radioModeWaste" id="radioModeWasteLabel">Minimize Cutoff Waste</label>
+        <input type="radio" name="radioMode" id="radioModeContiguous" />
+        <label for="radioModeContiguous" id="radioModeContiguousLabel">Maximize Future Value</label>
+        <input type="radio" name="radioMode" id="radioModeOrder" />
+        <label for="radioModeOrder" id="radioModeOrderLabel">Produce in Order</label>
+        <input type="radio" name="radioMode" id="radioModeToolChange" />
+        <label for="radioModeToolChange" id="radioModeToolChangeLabel">Minimize Tool Changes</label>
+      </form>
+      <div style="display: flex; align-items:center; justify-content: center;">
+        <button class="button pushButton" id="buttonSolve">Solve</button>
+        <div id="solveStatusLabel" style="float:right; padding-right:5px; vertical-align: middle;"></div>
+        <br>
+
       </div>
+      <div id="solveResponseLabel" style="padding-left:5px"></div>
+
+
+    </div>
+    <br>
+    <div id="stockPiecesDiv" class="controlBox">
+      <div><b>Stock Pieces</b></div>
       <br>
-      <div name="controls_element" id="controlElementDiv" class="controlBox">
-        <div><b>Element</b></div>
-        <div id="selectedNameLabel" style="padding-left:5px"> </div>
-        <button class="button pushButton" id="buttonElementDelete" style="display:none">Delete</button>
-      </div>
+      <div id="stockList" style="height:250; overflow:auto"></div>
+    </div>
+    <br>
+    <div id="designPartsDiv" class="controlBox">
+      <div><b>Design Parts</b></div>
+      <br>
+      <div id="matchingList" style="height:200; overflow:auto"></div>
     </div>
 
-    <div id="uiRight" style="position: absolute; right: 0px; top:0px;">
-      <div id="matchingDiv" class="controlBox">
-        <div><b>Matching</b></div>
-        <form class="formBoxed">
-          <input type="radio" name="radioMode" id="radioModeStock"/>
-          <label for="radioModeStock" id="radioModeStockLabel">Minimize Stock Pieces</label>
-          <input type="radio" name="radioMode" id="radioModeWaste" checked/>
-          <label for="radioModeWaste" id="radioModeWasteLabel">Minimize Cutoff Waste</label>
-          <input type="radio" name="radioMode" id="radioModeContiguous"/>
-          <label for="radioModeContiguous" id="radioModeContiguousLabel">Maximize Future Value</label>
-          <input type="radio" name="radioMode" id="radioModeOrder"/>
-          <label for="radioModeOrder" id="radioModeOrderLabel">Produce in Order</label>
-          <input type="radio" name="radioMode" id="radioModeToolChange"/>
-          <label for="radioModeToolChange" id="radioModeToolChangeLabel">Minimize Tool Changes</label>
-        </form>
-        <div style="text-align:center">
-          <button class="button pushButton" id="buttonSolve" style="text-align:center">Solve</button>
-          <div id="solveResponseLabel" style="padding-left:5px"></div>
-        </div>
-        
-        
-      </div>
-      <br>
-      <div id="stockPiecesDiv" class="controlBox">
-        <div><b>Stock Pieces</b></div>
-        <br>
-        <div id="stockList"></div>
-      </div>
-      <br>
-      <div id="designPartsDiv" class="controlBox">
-        <div><b>Design Parts</b></div>
-        <br>
-        <div id="matchingList" style="height:200; overflow:auto"></div>
-      </div>
-    
-    </div>
-  
-    
+  </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"
-      integrity="sha512-N4kV7GkNv7QR7RX9YF/olywyIgIwNvfEe2nZtfyj73HdjCUkAfOBDbcuJ/cTaN04JKRnw1YG1wnUyNKMsNgg3g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer">
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"
+    integrity="sha512-N4kV7GkNv7QR7RX9YF/olywyIgIwNvfEe2nZtfyj73HdjCUkAfOBDbcuJ/cTaN04JKRnw1YG1wnUyNKMsNgg3g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer">
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"
-      integrity="sha512-WzkwpdWEMAY/W8WvP9KS2/VI6zkgejR4/KTxTl4qHx0utqeyVE0JY+S1DlMuxDChC7x0oXtk/ESji6a0lP/Tdg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"
+    integrity="sha512-WzkwpdWEMAY/W8WvP9KS2/VI6zkgejR4/KTxTl4qHx0utqeyVE0JY+S1DlMuxDChC7x0oXtk/ESji6a0lP/Tdg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer">
     </script>
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js" 
-      integrity="sha384-/KNQL8Nu5gCHLqwqfQjA689Hhoqgi2S84SNUxC3roTe4EhJ9AfLkp8QiQcU8AMzI" 
-      crossorigin="anonymous">
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"
+    integrity="sha384-/KNQL8Nu5gCHLqwqfQjA689Hhoqgi2S84SNUxC3roTe4EhJ9AfLkp8QiQcU8AMzI" crossorigin="anonymous">
     </script>
-    
-    <!--<script src="build/StockPiece.js"></script>
-    <script src="build/socketio.js"></script>
-    <script src="build/SceneElement.js"></script>
-    <script src="build/Scene.js"></script>
-    <script src="build/sketch.js"></script>-->
-    <script src="dist/bundle.js"></script>
-    <link rel="shortcut icon" href="https://p5js.org/assets/img/favicon.ico" />
-    <link rel="icon" href="https://p5js.org/assets/img/favicon.ico" />
 
-    
+  <script src="dist/bundle.js"></script>
+  <link rel="shortcut icon" href="https://p5js.org/assets/img/favicon.ico" />
+  <link rel="icon" href="https://p5js.org/assets/img/favicon.ico" />
 
-    <style>
-      * {
-        padding: 0px;
-        margin: 0px;
-      }
-      
-    </style>
-    <script></script>
-  </head>
+  <style>
+    * {
+      padding: 0px;
+      margin: 0px;
+    }
+  </style>
+  <script></script>
+</head>
 
-  <body></body>
+<body></body>
+
 </html>

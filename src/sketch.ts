@@ -13,6 +13,7 @@ export let scene:Scene = null;
 
 export let simLabel: p5.Element = null;
 export let solveResponseLabel: p5.Element = null;
+export let solveStatusLabel:p5.Element = null;
 
 let selectedNameLabel: p5.Element = null;
 
@@ -109,6 +110,7 @@ function setup() {
 
   simLabel = p.select("#simLabel");
   solveResponseLabel = p.select("#solveResponseLabel");
+  solveStatusLabel = p.select("#solveStatusLabel");
 
   selectedNameLabel = p.select("#selectedNameLabel");
 
@@ -195,13 +197,13 @@ function setSelectedElement(se:SceneElement):void {
     buttonElementDelete.hide();
   }
   else {
-    let contentString = se.getDisplayName() + " " + se.id + "<br>";
+    let contentString = se.getDisplayName() + " Id " + se.id + "<br>";
     if (se instanceof SENode) {
       contentString += "Position : " + se.position.x + "," + se.position.y + "," + se.position.z;
     }
     else if (se instanceof SEBeam) {
       let restLength = p.int(se.restLength * 1000) / 1000.0;
-      contentString += "Length : " + restLength;
+      contentString += "Length (cm) : " + restLength;
     }
     selectedNameLabel.html( contentString);
     buttonElementDelete.show();
@@ -339,7 +341,7 @@ function mousePressed():void {
 function uiUpdateDesignParts() {
   scene.updateDesignParts();
 
-  let contentString: string = "<table> <tr> <th></th> <th>id</th ><th>Length</th> <th></th> <th>Count</th> </tr>";
+  let contentString: string = "<table> <tr> <th></th> <th>Id&nbsp</th ><th>Length (cm)</th> <th></th> <th>Count</th> </tr>";
 
   for (const dp of scene.designPartsArray) {
     contentString += "<tr> <td><div style='width:20px; height:20px; background-color:" + dp.color.toString('#rrggbb') + "'></div></td>";
@@ -356,7 +358,7 @@ function uiUpdateDesignParts() {
  * Updates the html list showing the current stock pieces
  */
 function uiUpdateStockPieces() {
-  let contentString: string = "<table><tr><th>Id</th><th></th><th>Length</th></tr>";
+  let contentString: string = "<table><tr><th>Id</th><th></th><th>Length (cm)</th></tr>";
   let counter = 0;
   
   for (const sp of scene.stock) {
@@ -412,18 +414,16 @@ function setupControl() {
   let buttonDemo = p.select("#buttonLoadDemo");
   buttonDemo.mousePressed(function() {
     sampleData.loadDesignFeasible(p, scene);
-
     uiUpdateDesignParts();
-
+    scene.resetStockMatching();
     scene.switchSimMode(SimMode.STOPPED);
   });
 
   let buttonDemoInfeasible = p.select("#buttonLoadDemoInfeasible");
   buttonDemoInfeasible.mousePressed(function() {
     sampleData.loadDesignInfeasible(p, scene);
-
     uiUpdateDesignParts();
-
+    scene.resetStockMatching();
     scene.switchSimMode(SimMode.STOPPED);
   });
 
@@ -431,17 +431,20 @@ function setupControl() {
   buttonDemoBridge.mousePressed(function() {
     sampleData.loadDesignBridge(p,scene);
     uiUpdateDesignParts();
+    scene.resetStockMatching();
     scene.switchSimMode(SimMode.STOPPED);
   });
 
   let buttonInventoryExample = p.select("#buttonLoadInventoryExample");
   buttonInventoryExample.mousePressed(function() {
+    scene.resetStockMatching();
     scene.loadDefaultStock();
     uiUpdateStockPieces();
   });
 
   let buttonInventoryRandom = p.select("#buttonLoadInventoryRandom");
   buttonInventoryRandom.mousePressed(function() {
+    scene.resetStockMatching();
     scene.loadStockRandom();
     uiUpdateStockPieces();
   });

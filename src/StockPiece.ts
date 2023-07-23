@@ -30,14 +30,20 @@ export class StockPiece {
         p.rect(startX,startY,stockWidth,this.size);
 
         let startMatchY = startY;
+        let used = 0;
         for (let beam of this.matchedBeams) {
             p.fill( scene.designPartsArray[beam.designPartId].color);
             p.stroke(0);
             p.rect(startX + 2, startMatchY + 2, stockWidth - 4, beam.restLength - 4);
-            startMatchY += beam.restLength;
-
-            
+            startMatchY += beam.restLength;  
+            used += beam.restLength;
         }
+
+        if (used > 0 && used < this.size) {
+            p.fill(255,100,0);
+            p.rect(startX + 2, startMatchY + 2,stockWidth - 4, this.size - used - 4);
+        }
+        
     }
 
     drawMatchLines(scene:Scene, startX:number, selectedElement:SceneElement) {

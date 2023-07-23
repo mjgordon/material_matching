@@ -1,5 +1,5 @@
 import { io, Socket } from "socket.io-client";
-import { scene, solveResponseLabel, solveMethod } from "./sketch";
+import { scene, solveResponseLabel, solveStatusLabel, solveMethod } from "./sketch";
 import { SEBeam } from "./SceneElement";
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents> = null;
@@ -40,17 +40,20 @@ export function connectToDispatcher(): void {
 
 export function requestSolve(method: string): void {
     if (scene.designPartsArray.length == 0) {
+        solveStatusLabel.html("");
         solveResponseLabel.html("No Design in Scene");
         return;
     }
 
     if (scene.getStockLengths().length == 0) {
+        solveStatusLabel.html("");
         solveResponseLabel.html("No Stock in Scene");
         return;
     }
 
     if (solveWaiting) {
-        solveResponseLabel.html("Solving Please Wait");
+        solveStatusLabel.html("Solving Please Wait");
+        solveResponseLabel.html("");
         return;
     }
 
@@ -58,7 +61,8 @@ export function requestSolve(method: string): void {
     const jsonMap: Record<string, any> = {};
     jsonMap.method = method;
     jsonMap.stock_lengths = scene.getStockLengths();
-    jsonMap.model_args = {"preprocess":0};
+    jsonMap.model_args = {"max_seconds":10,
+                        "preprocess":0};
 
     if (solveMethod == "order") {
         jsonMap.part_lengths = scene.beams.map( beam => beam.restLength);
@@ -71,7 +75,8 @@ export function requestSolve(method: string): void {
 
     solveWaiting = true;
 
-    solveResponseLabel.html("Solving");
+    solveStatusLabel.html("Solving");
+    solveResponseLabel.html("");
 
     socket.emit("solve_request", JSON.stringify(jsonMap));
 }
@@ -131,24 +136,25 @@ function solveResponse(json: JSON) {
     var goalValue:number = Number(logParts[2]);
     var wasteValue:string = Number(logParts[3]).toFixed(1);
 
-    var responseString = "Solve Successful <br>";
+    var responseString = "";
 
     if (solveMethod === "default") {
-        responseString += "Solution uses " + Math.floor(goalValue) + " stock pieces and produces " + wasteValue + " cm of cutoff waste";
+        responseString += "Cutoff Waste : " + wasteValue + "cm <br>Using " + Math.floor(goalValue) + " stock pieces";
     }
     else if (solveMethod === "waste") {
-        responseString += "Solution produces " + wasteValue + " cm of cutoff waste";
+        responseString += "Cutoff Waste : " + wasteValue + "cm";
     }
     else if (solveMethod === "max") {
-        responseString += "Solution has a contiguous score of " + goalValue.toFixed(1) + " and produces " + wasteValue + " cm of cutoff waste";
+        responseString += "Cutoff Waste : " + wasteValue + "cm <br>Contiguous Score : " + goalValue.toFixed(3);
     }
     else if (solveMethod === "order") {
-        responseString += "When produced in order, solution produces " + wasteValue + " cm of cutoff waste";
+        responseString += "Cutoff Waste : " + wasteValue + "cm <br>When produced in order";
     }
     else if (solveMethod === "homogenous") {
-        responseString += "Solution has " +  Math.floor(goalValue) + " setup changes and produces " + wasteValue + " cm of cutoff waste";
+        responseString += "Cutoff Waste : " + wasteValue + "cm <br>Using " + Math.floor(goalValue) + " tool setup changes";
     }
 
+    solveStatusLabel.html("Success");
     solveResponseLabel.html(responseString);
 
     solveWaiting = false;
@@ -159,7 +165,8 @@ function solveInfeasible() {
     for (const stock of scene.stock) {
         stock.matchedBeams = [];
     }
-    solveResponseLabel.html("Solve Infeasible");
+    solveStatusLabel.html("Infeasible");
+    solveResponseLabel.html("");
 
     solveWaiting = false;
 }
