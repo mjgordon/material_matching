@@ -123,7 +123,12 @@ function setup() {
 
   dummyBeam = new SEBeam(null,null);
 
+  sampleData.loadDesignFeasible(p, scene);
+
+  uiUpdateDesignParts();
   uiUpdateStockPieces();
+
+  scene.switchSimMode(SimMode.STOPPED);
 
   setupControl();
 
@@ -355,7 +360,7 @@ function uiUpdateStockPieces() {
   let counter = 0;
   
   for (const sp of scene.stock) {
-    contentString += "<tr><td>" + counter + "</td><td>&nbsp:&nbsp</td><td>" + sp.size + "</td></tr>"
+    contentString += "<tr><td>" + counter + "</td><td>&nbsp:&nbsp</td><td>" + sp.size.toFixed(1) + "</td></tr>"
     counter += 1;
   }
   contentString += "</table>";
@@ -427,6 +432,18 @@ function setupControl() {
     sampleData.loadDesignBridge(p,scene);
     uiUpdateDesignParts();
     scene.switchSimMode(SimMode.STOPPED);
+  });
+
+  let buttonInventoryExample = p.select("#buttonLoadInventoryExample");
+  buttonInventoryExample.mousePressed(function() {
+    scene.loadDefaultStock();
+    uiUpdateStockPieces();
+  });
+
+  let buttonInventoryRandom = p.select("#buttonLoadInventoryRandom");
+  buttonInventoryRandom.mousePressed(function() {
+    scene.loadStockRandom();
+    uiUpdateStockPieces();
   });
 
 

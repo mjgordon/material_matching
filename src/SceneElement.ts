@@ -68,7 +68,7 @@ export class SENode extends SceneElement {
             p.fill(64);
         }
         else {
-            p.fill(20,20,255);
+            p.fill(100,100,200);
         }
         
         p.ellipse(this.simPosition.x, this.simPosition.y, SENode.nodeSize,SENode.nodeSize);

@@ -126,7 +126,7 @@ function solveResponse(json: JSON) {
         }
     }
 
-    console.log(response);
+    //console.log(response);
     const logParts = response.log_string.split(",");
     var goalValue:number = Number(logParts[2]);
     var wasteValue:string = Number(logParts[3]).toFixed(1);

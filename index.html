@@ -23,6 +23,11 @@
         <button class="button pushButton" id="buttonLoadDemoBridge">Load Bridge Example</button>
 
         <hr class="hrUI">
+        <div><b>Material Stock Inventory</b></div>
+        <button class="button pushButton" id="buttonLoadInventoryExample">Load Example Inventory</button>
+        <button class="button pushButton" id="buttonLoadInventoryRandom">Load Random Inventory</button>
+
+        <hr class="hrUI" style="display:none">
   
         <!--Hidden as not currently important for the matching demo-->
         <button class="button pushButton" id="buttonPlay" style="display:none">Play</button>
@@ -70,7 +75,7 @@
       <div id="designPartsDiv" class="controlBox">
         <div><b>Design Parts</b></div>
         <br>
-        <div id="matchingList"></div>
+        <div id="matchingList" style="height:200; overflow:auto"></div>
       </div>
     
     </div>

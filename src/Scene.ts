@@ -266,6 +266,26 @@ export class Scene{
         this.stock.push(new StockPiece(100));
         this.stock.push(new StockPiece(100));
     }
+
+    loadStockRandom() {
+        this.stock = [];
+
+        for (let i = 0; i < 4; i++) {
+            this.stock.push(new StockPiece(p.random(400,600)));
+        }
+
+        for (let i = 0; i < 4; i++) {
+            this.stock.push(new StockPiece(p.random(200,400)));
+        }
+        for (let i = 0; i < 4; i++) {
+            this.stock.push(new StockPiece(p.random(50,150)));
+        }
+
+    }
+
+    resetStockMatching() {
+        this.stock.forEach(stockPiece => stockPiece.matchedBeams = []);
+    }
 }
 
 export class DesignPart {

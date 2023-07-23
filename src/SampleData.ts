@@ -1,28 +1,27 @@
 import * as p5 from "p5";
 
 import {Scene} from "./Scene";
-import {SENode, SEBeam} from "./SceneElement";
+
 
 export function loadDesignBridge(p:p5, scene:Scene) {
     const midW = Math.round(p.width / 2 / 100) * 100;
     const midH = Math.round(p.height / 2 / 100) * 100;
 
-
     scene.clear();
 
     scene.addNode(midW - 300, midH, true); // 0
-    scene.addNode(midW - 200, midH, true); // 1
-    scene.addNode(midW - 100, midH, true); // 2
-    scene.addNode(midW, midH, true); // 3
-    scene.addNode(midW + 100, midH, true); // 4
-    scene.addNode(midW + 200, midH, true); // 5
-    scene.addNode(midW + 300, midH, true); // 5
+    scene.addNode(midW - 200, midH, false); // 1
+    scene.addNode(midW - 100, midH, false); // 2
+    scene.addNode(midW, midH, false); // 3
+    scene.addNode(midW + 100, midH, false); // 4
+    scene.addNode(midW + 200, midH, false); // 5
+    scene.addNode(midW + 300, midH, true); // 6
 
-    scene.addNode(midW - 200, midH - 100, true); // 7
-    scene.addNode(midW - 100, midH - 150, true); // 8
-    scene.addNode(midW, midH - 200, true); // 9
-    scene.addNode(midW + 100, midH - 150, true); // 10
-    scene.addNode(midW + 200, midH - 100, true); // 11
+    scene.addNode(midW - 200, midH - 100, false); // 7
+    scene.addNode(midW - 100, midH - 150, false); // 8
+    scene.addNode(midW, midH - 200, false); // 9
+    scene.addNode(midW + 100, midH - 150, false); // 10
+    scene.addNode(midW + 200, midH - 100, false); // 11
 
     scene.addBeam(0,1);
     scene.addBeam(1,2);
@@ -50,6 +49,7 @@ export function loadDesignBridge(p:p5, scene:Scene) {
     scene.addBeam(5,11);
 }
 
+
 export function loadDesignFeasible(p:p5, scene:Scene) {
     const mid = Math.floor(p.width / 2 / 100) * 100;
 
@@ -75,6 +75,7 @@ export function loadDesignFeasible(p:p5, scene:Scene) {
     scene.addBeam(2,5);
     scene.addBeam(3,4);
 }
+
 
 export function loadDesignInfeasible(p:p5, scene:Scene) {
     const mid = Math.floor(p.width / 2 / 100) * 100;
